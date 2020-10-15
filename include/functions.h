@@ -789,7 +789,7 @@ f32* func_800B8248(PosRot* param_1, ActorPlayer* param_2); // func_800B8248
 void func_800B82EC(void); // func_800B82EC
 void func_800B83BC(void); // func_800B83BC
 void func_800B83F8(void); // func_800B83F8
-int func_800B84D0(Actor* actor, GlobalContext* ctxt); // func_800B84D0
+s32 func_800B84D0(Actor* actor, GlobalContext* ctxt); // func_800B84D0
 UNK_TYPE4 func_800B8500(Actor* actor, GlobalContext* ctxt, float fParm3, float fParm4, int param_5); // func_800B8500
 void func_800B85E0(Actor* actor, GlobalContext* ctxt, f32 uParm3, s32 uParm4); // func_800B85E0
 void func_800B8614(Actor* actor, GlobalContext* ctxt, f32 uParm3); // func_800B8614
@@ -1314,10 +1314,10 @@ void func_800E01DC(s32 param_1, u32 param_2, UNK_TYPE4 param_3, UNK_TYPE4 param_
 UNK_TYPE4 func_800E0228(void); // func_800E0228
 void func_800E0238(void); // func_800E0238
 void func_800E02AC(void); // func_800E02AC
-void func_800E0308(void); // func_800E0308
+void func_800E0308(Camera* camera, Actor* actor); // func_800E0308
 void func_800E031C(void); // func_800E031C
 void func_800E0348(Camera* camera); // func_800E0348
-s800E03A0* func_800E03A0(s32 a0); // func_800E03A0
+ActorDamageChart* func_800E03A0(s32 a0); // func_800E03A0
 void func_800E03CC(u8* param_1); // func_800E03CC
 f32 Collision_GetDamageAndEffectOnBumper(ColCommon* toucher, ColBodyInfo* toucherBody, ColCommon* bumper, ColBodyInfo* bumperBody, u32* effect); // func_800E0410
 void func_800E04BC(void); // func_800E04BC
@@ -1496,8 +1496,8 @@ void Collision_DoOTWithOT(GlobalContext* ctxt, CollisionCheckContext* colCtxt); 
 void func_800E7494(ActorA0* param_1); // func_800E7494
 void func_800E74DC(ActorA0* param_1); // func_800E74DC
 void func_800E7508(s32 param_1, UNK_PTR param_2); // func_800E7508
-void func_800E7530(ActorA0* param_1, ActorDamageChart* param_2, UNK_PTR param_3); // func_800E7530
-void func_800E755C(ActorA0* puParm1, ActorDamageChart* uParm2, UNK_PTR puParm3); // func_800E755C
+void func_800E7530(ActorA0* param_1, ActorDamageChart* param_2, CollisionCheckInfoInit* init); // func_800E7530
+void func_800E755C(ActorA0* puParm1, ActorDamageChart* uParm2, CollisionCheckInfoInit2* init); // func_800E755C
 void func_800E7590(void); // func_800E7590
 void func_800E75C8(void); // func_800E75C8
 void func_800E77EC(void); // func_800E77EC
@@ -1594,12 +1594,12 @@ void nop_800EDDB0(GlobalContext* ctxt); // func_800EDDB0
 void func_800EDDBC(void); // func_800EDDBC
 void func_800EDDCC(GlobalContext* ctxt, unsigned int uParm2); // func_800EDDCC
 void func_800EDE34(Actor* actor, GlobalContext* ctxt, int param_3); // func_800EDE34
-void func_800EDF24(void); // func_800EDF24
+void func_800EDF24(Actor* actor, GlobalContext* ctxt, s32 param_3); // func_800EDF24
 void func_800EDF78(Actor* actor, GlobalContext* ctxt, int iParm3); // func_800EDF78
 void func_800EE0CC(Actor* actor, GlobalContext* ctxt, int iParm3); // func_800EE0CC
 void func_800EE1D8(void); // func_800EE1D8
-u32 func_800EE200(GlobalContext* ctxt, u32 uParm2); // func_800EE200
-u32 func_800EE29C(GlobalContext* ctxt, u32 uParm2); // func_800EE29C
+s32 func_800EE200(GlobalContext* ctxt, s32 uParm2); // func_800EE200
+s32 func_800EE29C(GlobalContext* ctxt, s32 uParm2); // func_800EE29C
 u32 func_800EE2F4(GlobalContext* ctxt); // func_800EE2F4
 void func_800EE320(GlobalContext* ctxt, s16 index); // func_800EE320
 void func_800EE364(GlobalContext* ctxt, s16 index); // func_800EE364
@@ -1676,7 +1676,7 @@ s16 ActorCutscene_GetAdditionalCutscene(s16 index); // func_800F20B8
 s16 ActorCutscene_GetLength(s16 index); // func_800F20F8
 void func_800F2138(void); // func_800F2138
 void func_800F2178(void); // func_800F2178
-s16 ActorCutscene_GetCurrentCamera(void); // func_800F21B8
+s16 ActorCutscene_GetCurrentCamera(s16 camId); // func_800F21B8
 void func_800F21CC(void); // func_800F21CC
 UNK_TYPE4 func_800F22C4(short param_1, Actor* actor); // func_800F22C4
 void ActorCutscene_SetReturnCamera(s16 index); // func_800F23C4
@@ -2079,7 +2079,7 @@ void func_8010BE78(void); // func_8010BE78
 void func_8010BEBC(void); // func_8010BEBC
 void func_8010BEF0(void); // func_8010BEF0
 void func_8010BF24(void); // func_8010BF24
-void func_8010BF58(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5); // func_8010BF58
+s32 func_8010BF58(Actor* actor, GlobalContext* globalCtx, s32* param_3, s32 (*param_4)(struct Actor*, GlobalContext*), s32* param_5); // param_3 is a struct of some kind
 void Nmi_Init(void); // func_8010C0C0
 void Nmi_SetPrenmiStart(void); // func_8010C164
 s32 Nmi_GetPrenmiHasStarted(void); // func_8010C19C
@@ -2535,7 +2535,7 @@ void func_80132D70(void); // func_80132D70
 void func_80132E9C(void); // func_80132E9C
 void func_80132FDC(void); // func_80132FDC
 void func_80133000(void); // func_80133000
-void func_80133038(void); // func_80133038
+s32 func_80133038(GlobalContext* globalCtx, s32* param_2, u8* param_3); // func_80133038
 void SkelAnime_LodDrawLimb(GlobalContext* globalCtx, s32 limbIndex, Skeleton* skeleton, Vec3s* limbDrawTable,
                            OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, Actor* actor, s32 dListIndex);
 void SkelAnime_LodDraw(GlobalContext* globalCtx, Skeleton* skeleton, Vec3s* limbDrawTable,
@@ -2703,27 +2703,27 @@ void func_8013A46C(s32 flag); // func_8013A46C
 u32 func_8013A4C4(s32 flag); // func_8013A4C4
 s16 func_8013A504(s16 val); // func_8013A504
 s32 func_8013A530(GlobalContext* ctxt, Actor* actor, s32 flag, Vec3f* pos, Vec3s* rot, f32 distanceMin, f32 distanceMax, s16 angleError); // func_8013A530
-void func_8013A7C0(void); // func_8013A7C0
+Actor* func_8013A7C0(GlobalContext* ctxt, u8 param_2); // func_8013A7C0
 void func_8013A860(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5, UNK_TYPE4 param_6, UNK_TYPE4 param_7, UNK_TYPE4 param_8, UNK_TYPE4 param_9, UNK_TYPE4 param_10); // func_8013A860
 void func_8013AB00(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5, UNK_TYPE4 param_6, UNK_TYPE4 param_7, UNK_TYPE4 param_8, UNK_TYPE4 param_9); // func_8013AB00
-void func_8013AD6C(void); // func_8013AD6C
-void func_8013AD9C(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5, UNK_TYPE4 param_6); // func_8013AD9C
+s32 func_8013AD6C(GlobalContext* ctxt); // func_8013AD6C
+void func_8013AD9C(s16 param_1, s16 param_2, Vec3f* param_3, Vec3s* param_4, s32 param_5, s32 param_6); // func_8013AD9C
 void func_8013AED4(u16* param_1, u16 param_2, u16 param_3); // func_8013AED4
-void func_8013AF00(void); // func_8013AF00
+void func_8013AF00(s32*, s32, s32); // func_8013AF00
 void func_8013B010(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5, UNK_TYPE4 param_6, UNK_TYPE4 param_7); // func_8013B010
 void func_8013B0C8(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5); // func_8013B0C8
 void func_8013B350(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5, UNK_TYPE4 param_6, UNK_TYPE4 param_7); // func_8013B350
-void func_8013B6B0(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5, UNK_TYPE4 param_6, UNK_TYPE4 param_7, UNK_TYPE4 param_8, UNK_TYPE4 param_9); // func_8013B6B0
-void func_8013B878(void); // func_8013B878
-void func_8013BB34(void); // func_8013BB34
+s32 func_8013B6B0(s32 param_1, s32 param_2, s32 param_3, s32 param_4, s32 param_5, s32* param_6, s32* param_7, Vec3f* param_8, s16 param_9); // func_8013B6B0
+void func_8013B878(GlobalContext* globalCtx, s32*, s32, Vec3f*); // func_8013B878
+Actor* func_8013BB34(GlobalContext* globalCtx, u8 param_2, s32 param_3); // func_8013BB34
 void func_8013BB7C(void); // func_8013BB7C
-void func_8013BC6C(void); // func_8013BC6C
+s32 func_8013BC6C(SkelAnime* skelAnime, struct_8013BC6C* param_2, s32 index); // func_8013BC6C
 void func_8013BD40(void); // func_8013BD40
 void func_8013BEDC(void); // func_8013BEDC
 void func_8013C068(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5); // func_8013C068
 void func_8013C624(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE4 param_5, UNK_TYPE4 param_6); // func_8013C624
 void func_8013C8B8(void); // func_8013C8B8
-void func_8013C964(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE1 param_5, UNK_TYPE4 param_6); // func_8013C964
+void func_8013C964(Actor* actor, GlobalContext* globalCtx, s32 param_3, f32 param_4, UNK_TYPE1 param_5, s16 param_6); // func_8013C964
 void func_8013CC2C(void); // func_8013CC2C
 void func_8013CD64(UNK_TYPE1 param_1, UNK_TYPE1 param_2, UNK_TYPE1 param_3, UNK_TYPE1 param_4, UNK_TYPE1 param_5, UNK_TYPE4 param_6, UNK_TYPE4 param_7); // func_8013CD64
 void func_8013CF04(void); // func_8013CF04
@@ -2735,9 +2735,9 @@ void func_8013D68C(void); // func_8013D68C
 void func_8013D720(void); // func_8013D720
 void func_8013D768(void); // func_8013D768
 void func_8013D83C(void); // func_8013D83C
-void func_8013D8DC(void); // func_8013D8DC
-void func_8013D924(void); // func_8013D924
-void func_8013D960(void); // func_8013D960
+s32 func_8013D8DC(s8 param_1, GlobalContext* globalCtx); // func_8013D8DC
+u8 func_8013D924(s32 param_1, GlobalContext* globalCtx); // func_8013D924
+Actor* func_8013D960(GlobalContext* globalCtx, Actor* actor, u8 param_3, s16 param_4); // func_8013D960
 void func_8013D9C8(void); // func_8013D9C8
 void func_8013DB90(void); // func_8013DB90
 void func_8013DC40(void); // func_8013DC40

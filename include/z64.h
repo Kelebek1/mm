@@ -333,12 +333,15 @@ typedef struct {
     /* 0x277 */ UNK_TYPE1 pad277[0x9];
     /* 0x280 */ u16 unk280;
     /* 0x282 */ u16 unk282;
-    /* 0x284 */ UNK_TYPE1 pad284[0x28];
+    /* 0x284 */ UNK_TYPE1 pad284[0x26];
+    /* 0x2AA */ s16 unk2AA;
     /* 0x2AC */ u8 cutsceneTrigger;
     /* 0x2AD */ UNK_TYPE1 pad2AD[0x5];
     /* 0x2B2 */ u16 environmentTime;
-    /* 0x2B4 */ UNK_TYPE1 pad2B4[0x4];
-    /* 0x2B8 */ s16 unk2b8;
+    /* 0x2B4 */ UNK_TYPE1 pad2B4[0x1];
+    /* 0x2B5 */ u8 unk2B5;
+    /* 0x2B6 */ UNK_TYPE1 pad2B6[0x2];
+    /* 0x2B8 */ s16 unk2B8;
     /* 0x2BA */ UNK_TYPE1 pad2BA[0xA];
     /* 0x2C4 */ f32 unk2C4;
     /* 0x2C8 */ CycleSceneFlags cycleSceneFlags[120];
@@ -461,10 +464,6 @@ typedef void(*light_map_directional_func)(LightMapper* mapper, void* params, Vec
 typedef void(*osCreateThread_func)(void*);
 
 typedef void*(*printf_func)(void*, char*, size_t);
-
-typedef struct {
-    /* 0x00 */ UNK_TYPE1 pad0[0x20];
-} s800E03A0; // size = 0x20
 
 typedef struct {
     /* 0x000 */ OSThread unk0;
@@ -657,7 +656,7 @@ typedef struct {
     /* 0x000E */ UNK_TYPE1 padE[0x2];
     /* 0x0010 */ u32 isNight;
     /* 0x0014 */ u32 unk14;
-    /* 0x0018 */ u32 day;
+    /* 0x0018 */ s32 day;
     /* 0x001C */ u32 daysElapsed;
     /* 0x0020 */ u8 unk20;
     /* 0x0021 */ UNK_TYPE1 pad21[0x2];

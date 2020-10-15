@@ -43,6 +43,21 @@ typedef struct {
     /* 0x3A */ s16 unk3A;
 } ActorEnTest20C; // size = 0x3C
 
+typedef struct {
+    /* 0x00 */ u8 health;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ u8 mass;
+} CollisionCheckInfoInit;
+
+typedef struct {
+    /* 0x00 */ u8 health;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ u8 mass;
+} CollisionCheckInfoInit2;
+
 // Related to collision?
 typedef struct {
     /* 0x00 */ ActorDamageChart* damageChart;
@@ -217,7 +232,9 @@ typedef struct {
     /* 0xB28 */ s16 unkB28;
     /* 0xB2A */ UNK_TYPE1 padB2A[0x72];
     /* 0xB9C */ Vec3f unkB9C;
-    /* 0xBA8 */ UNK_TYPE1 padBA8[0x1D0];
+    /* 0xBA8 */ UNK_TYPE1 padBA8[0x9C];
+    /* 0xC44 */ f32 unkC44;
+    /* 0xC48 */ UNK_TYPE1 padC48[0x130];
 } ActorPlayer; // size = 0xD78
 
 typedef struct {

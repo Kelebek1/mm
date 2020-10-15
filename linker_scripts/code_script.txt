@@ -6461,8 +6461,8 @@ SECTIONS
     ovl_En_An : AT(RomLocation)
     {
         build/src/overlays/actors/ovl_En_An/z_en_an.o(.text)
-        build/asm/ovl_En_An_data.o(.data)
-        build/asm/ovl_En_An_rodata.o(.rodata)
+        build/src/overlays/actors/ovl_En_An/z_en_an.o(.data)
+        build/src/overlays/actors/ovl_En_An/z_en_an.o(.rodata)
     }
     SegmentEnd = .;
     SegmentSize = SegmentEnd - SegmentStart;

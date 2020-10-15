@@ -57,6 +57,15 @@ typedef struct {
     /* 0x00C */ u16 limit;
 } AnimationHeader; // size = 0x10
 
+typedef struct {
+    /* 0x000 */ GenericAnimationHeader* header;
+    /* 0x004 */ f32 unk_04;
+    /* 0x008 */ s16 unk_08;
+    /* 0x00A */ s16 unk_0A;
+    /* 0x00C */ u8 unk_0C;
+    /* 0x00E */ s16 unk_0E;
+} struct_8013BC6C; // size = 0x10
+
 typedef enum {
     ANIMATION_LINKANIMETION,
     ANIMATION_TYPE1,

@@ -384,7 +384,7 @@ void Scene_HeaderCommand10(GlobalContext *ctxt, SceneCmd *entry) {
         }
     }
 
-    if (gSaveContext.extra.unk2b8 == 0) {
+    if (gSaveContext.extra.unk2B8 == 0) {
         // TODO: Needs REG macro
         gStaticContext->data[0x0F] = ctxt->kankyoContext.unk2;
     }
