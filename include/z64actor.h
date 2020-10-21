@@ -20,7 +20,7 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ u8 attack[32];
-} ActorDamageChart; // size = 0x20
+} DamageTable; // size = 0x20
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -43,20 +43,35 @@ typedef struct {
     /* 0x3A */ s16 unk3A;
 } ActorEnTest20C; // size = 0x3C
 
+typedef struct {
+    /* 0x00 */ u8 health;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ u8 mass;
+} CollisionCheckInfoInit; // size = 0x8
+
+typedef struct {
+    /* 0x00 */ u8 health;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ u8 mass;
+} CollisionCheckInfoInit2; // size = 0xC
+
 // Related to collision?
 typedef struct {
-    /* 0x00 */ ActorDamageChart* damageChart;
+    /* 0x00 */ DamageTable* damageTable;
     /* 0x04 */ Vec3f displacement;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ s16 unk14;
+    /* 0x10 */ s16 unk_10;
+    /* 0x12 */ s16 unk_12;
+    /* 0x14 */ s16 unk_14;
     /* 0x16 */ u8 mass;
     /* 0x17 */ u8 health;
     /* 0x18 */ u8 damage;
-    /* 0x19 */ u8 damageEffect;
-    /* 0x1A */ u8 impactEffect;
-    /* 0x1B */ UNK_TYPE1 pad1B[0x1];
-} ActorA0; // size = 0x1C
+    /* 0x19 */ u8 damageEffect; // Stores what effect should occur when hit by a weapon
+    /* 0x1A */ u8 atHitEffect;  // Stores what effect should occur when AT connects with an AC
+    /* 0x1B */ u8 acHitEffect;  // Stores what effect should occur when AC is touched by an AT
+} CollisionCheckInfo; // size = 0x1C
 
 typedef struct {
     /* 0x00 */ s16 id;
@@ -135,7 +150,7 @@ typedef struct Actor {
     /* 0x094 */ f32 sqrdDistanceFromLink;
     /* 0x098 */ f32 xzDistanceFromLink;
     /* 0x09C */ f32 yDistanceFromLink;
-    /* 0x0A0 */ ActorA0 unkA0;
+    /* 0x0A0 */ CollisionCheckInfo colChkInfo;
     /* 0x0BC */ ActorShape shape;
     /* 0x0D4 */ UNK_TYPE1 padD4[0x18];
     /* 0x0EC */ Vec3f projectedPos;
@@ -230,14 +245,14 @@ typedef struct {
     /* 0x150 */ s16 unk150;
     /* 0x152 */ s16 unk152;
     /* 0x154 */ f32 unk154;
-    /* 0x158 */ ColCylinder collision;
+    /* 0x158 */ ColliderCylinder collision;
     /* 0x1A4 */ UNK_TYPE1 pad1A4[0x4];
 } ActorEnItem00; // size = 0x1A8
 
 typedef struct {
     /* 0x000 */ Actor base;
     /* 0x144 */ ActorFunc update;
-    /* 0x148 */ ColCylinder collision;
+    /* 0x148 */ ColliderCylinder collision;
     /* 0x194 */ UNK_TYPE1 pad194[0x14];
 } ActorEnAObj; // size = 0x1A8
 

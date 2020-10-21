@@ -339,7 +339,7 @@ SECTIONS
         build/asm/z_camera.o(.text)
         build/src/code/code_0x800E03A0.o(.text)
         . += 0x10;
-        build/asm/z_collision_check.o(.text)
+        build/src/code/z_collision_check.o(.text)
         build/src/code/code_0x800E8EA0.o(.text)
         build/asm/code_0x800E9360.o(.text)
         build/asm/z_debug.o(.text)
@@ -473,7 +473,7 @@ SECTIONS
         build/src/code/z_actor_dlftbls.o(.data)
         build/asm/code_data_z_bgcheck.o(.data)
         build/asm/code_data_z_camera.o(.data)
-        build/asm/code_data_z_collision_check.o(.data)
+        build/src/code/z_collision_check.o(.data)
         build/asm/code_data_z_debug_display.o(.data)
         build/asm/code_data_z_debug_mode.o(.data)
         build/asm/code_data_z_draw.o(.data)

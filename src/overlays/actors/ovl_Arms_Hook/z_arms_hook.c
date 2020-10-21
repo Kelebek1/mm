@@ -24,7 +24,7 @@ const ActorInit Arms_Hook_InitVars = {
     (ActorFunc)ArmsHook_Draw
 };
 
-ColQuadInit D_808C1BC0 = {
+ColliderQuadInit D_808C1BC0 = {
     { 10, 0x09, 0x00, 0x00, 0x08, 3 },
     { 0x02, { 0x00000080, 0x00, 0x02 }, { 0xF7CFFFFF, 0x00, 0x00 }, 0x05, 0x00, 0x00 },
     { 0 },
@@ -47,8 +47,8 @@ void ArmsHook_SetupAction(ArmsHook* this, ArmsHookActionFunc actionFunc) {
 void ArmsHook_Init(Actor* thisx, GlobalContext* globalCtx) {
     ArmsHook* this = THIS;
 
-    Collision_InitQuadDefault(globalCtx, &this->collider);
-    Collision_InitQuadWithData(globalCtx, &this->collider, &this->actor, &D_808C1BC0);
+    Collider_InitQuad(globalCtx, &this->collider);
+    Collider_InitQuadWithData(globalCtx, &this->collider, &this->actor, &D_808C1BC0);
     ArmsHook_SetupAction(this, ArmsHook_Wait);
     this->unk1E0 = this->actor.currPosRot.pos;
 }
@@ -59,7 +59,7 @@ void ArmsHook_Destroy(Actor* thisx, GlobalContext* globalCtx) {
     if (this->grabbed != NULL) {
         this->grabbed->flags &= ~0x2000;
     }
-    Collision_FiniQuad(globalCtx, &this->collider);
+    Collider_DestroyQuad(globalCtx, &this->collider);
 }
 
 void ArmsHook_Wait(ArmsHook* this, GlobalContext* globalCtx) {
@@ -125,10 +125,10 @@ void ArmsHook_Shoot(ArmsHook* this, GlobalContext* globalCtx) {
     func_800B8F98(&player->base, 0x100B);
     ArmsHook_CheckForCancel(this);
 
-    if (this->timer != 0 && (this->collider.base.flagsAT & 2) && (this->collider.body.unk20->unk14 != 4)) {
-        Actor* touchedActor = this->collider.base.collisionAT;
+    if (this->timer != 0 && (this->collider.base.atFlags & 2) && (this->collider.body.atHitItem->flags != 4)) {
+        Actor* touchedActor = this->collider.base.at;
         if ((touchedActor->update != NULL) && (touchedActor->flags & 0x600)) {
-            if (this->collider.body.unk20->unk16 & 4) {
+            if (this->collider.body.atHitItem->bumperFlags & 4) {
                 ArmsHook_AttachHookToActor(this, touchedActor);
                 if ((touchedActor->flags & 0x400) == 0x400) {
                     func_808C1154(this);
@@ -136,7 +136,7 @@ void ArmsHook_Shoot(ArmsHook* this, GlobalContext* globalCtx) {
             }
         }
         this->timer = 0;
-        func_8019F1C0(&this->actor.projectedPos, 0x1814);
+        Audio_PlaySoundGeneral(&this->actor.projectedPos, 0x1814);
 
         return;
     }
@@ -250,10 +250,10 @@ void ArmsHook_Shoot(ArmsHook* this, GlobalContext* globalCtx) {
                     }
                 }
                 func_808C1154(this);
-                func_8019F1C0(&this->actor.projectedPos, 0x1829);
+                Audio_PlaySoundGeneral(&this->actor.projectedPos, 0x1829);
             } else {
                 func_800E8668(globalCtx, &this->actor.currPosRot.pos);
-                func_8019F1C0(&this->actor.projectedPos, 0x1813);
+                Audio_PlaySoundGeneral(&this->actor.projectedPos, 0x1813);
             }
         } else {
             if ((globalCtx->state.input[0].pressEdge.buttons &
@@ -289,14 +289,14 @@ void ArmsHook_Draw(Actor* thisx, GlobalContext* globalCtx) {
             f32 f0;
 
             if ((ArmsHook_Shoot != this->actionFunc) || (this->timer <= 0)) {
-                SysMatrix_MultiplyVector3fByState(&D_808C1C10, &this->unk1E0);
-                SysMatrix_MultiplyVector3fByState(&D_808C1C28, &sp5C);
-                SysMatrix_MultiplyVector3fByState(&D_808C1C34, &sp50);
+                Matrix_MultVec3f(&D_808C1C10, &this->unk1E0);
+                Matrix_MultVec3f(&D_808C1C28, &sp5C);
+                Matrix_MultVec3f(&D_808C1C34, &sp50);
                 this->unk1C4 = 0;
             } else {
-                SysMatrix_MultiplyVector3fByState(&D_808C1C1C, &this->unk1E0);
-                SysMatrix_MultiplyVector3fByState(&D_808C1C40, &sp5C);
-                SysMatrix_MultiplyVector3fByState(&D_808C1C4C, &sp50);
+                Matrix_MultVec3f(&D_808C1C1C, &this->unk1E0);
+                Matrix_MultVec3f(&D_808C1C40, &sp5C);
+                Matrix_MultVec3f(&D_808C1C4C, &sp50);
             }
             func_80126440(globalCtx, &this->collider.base, &this->unk1C4, &sp5C, &sp50);
             func_8012C28C(globalCtx->state.gfxCtx);

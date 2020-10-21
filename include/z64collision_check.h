@@ -1,231 +1,292 @@
 #ifndef _Z_COLLISION_CHECK_H_
 #define _Z_COLLISION_CHECK_H_
 
-#include <PR/ultratypes.h>
-#include <z64math.h>
-#include <unk.h>
+#define COLLISION_CHECK_AT_MAX 50
+#define COLLISION_CHECK_AC_MAX 60
+#define COLLISION_CHECK_OC_MAX 50
+#define COLLISION_CHECK_OC_LINE_MAX 3
 
 struct Actor;
 
-typedef struct {
-    /* 0x0 */ u32 unk0;
-    /* 0x4 */ u8 unk4;
-    /* 0x5 */ u8 unk5;
-} ColBumpInit; // size = 0x8
+typedef enum {
+    /* 0x0 */ COLTYPE_UNK0,
+    /* 0x1 */ COLTYPE_UNK1,
+    /* 0x2 */ COLTYPE_UNK2,
+    /* 0x3 */ COLTYPE_UNK3,
+    /* 0x4 */ COLTYPE_UNK4,
+    /* 0x5 */ COLTYPE_UNK5,
+    /* 0x6 */ COLTYPE_UNK6,
+    /* 0x7 */ COLTYPE_UNK7,
+    /* 0x8 */ COLTYPE_UNK8,
+    /* 0x9 */ COLTYPE_METAL_SHIELD,
+    /* 0xA */ COLTYPE_UNK10,
+    /* 0xB */ COLTYPE_WOODEN_SHIELD,
+    /* 0xC */ COLTYPE_UNK12,
+    /* 0xD */ COLTYPE_UNK13
+} ColliderType;
+
+typedef enum {
+    /* 0x0 */ COLSHAPE_JNTSPH,
+    /* 0x1 */ COLSHAPE_CYLINDER,
+    /* 0x2 */ COLSHAPE_TRIS,
+    /* 0x3 */ COLSHAPE_QUAD,
+    /* 0x4 */ COLSHAPE_SPHERE,
+    /* 0x5 */ COLSHAPE_INVALID
+} ColliderShape;
 
 typedef struct {
-    /* 0x0 */ u8 unk0;
-    /* 0x1 */ u8 unk1;
-    /* 0x2 */ u8 unk2;
-    /* 0x3 */ u8 unk3;
-    /* 0x4 */ u8 unk4;
-    /* 0x5 */ u8 type;
-} ColCommonInit; // size = 0x6
+    /* 0x00 */ Linef line;
+    /* 0x18 */ u16 unk_18;
+} OcLine; // size = 0x1C
+
+/**************************************************/
+/*              Collider Base Types               */
+/**************************************************/
 
 typedef struct {
-    /* 0x0 */ u32 collidesWith;
-    /* 0x4 */ u8 unk4;
-    /* 0x5 */ u8 damage;
-} ColTouch; // size = 0x8
-
-typedef struct {
-    /* 0x0 */ u32 unk0;
-    /* 0x4 */ u8 unk4;
-    /* 0x5 */ u8 unk5;
-} ColTouchInit; // size = 0x8
-
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x04 */ ColTouchInit unk4;
-    /* 0x0C */ ColBumpInit unkC;
-    /* 0x14 */ u8 unk14;
-    /* 0x15 */ u8 unk15;
-    /* 0x16 */ u8 unk16;
-} ColBodyInfoInit; // size = 0x18
-
-typedef struct {
-    /* 0x0 */ u32 collidesWith;
-    /* 0x4 */ u8 unk4;
-    /* 0x5 */ u8 unk5;
-    /* 0x6 */ Vec3s unk6;
-} ColBump; // size = 0xC
-
-typedef struct {
-    /* 0x0 */ s16 radius;
-    /* 0x2 */ s16 height;
-    /* 0x4 */ s16 yOffset;
-    /* 0x6 */ Vec3s loc;
-} ColCylinderParams; // size = 0xC
-
-typedef struct {
-    /* 0x00 */ Vec3f pointA;
-    /* 0x0C */ Vec3f pointB;
-    /* 0x18 */ Vec3f pointC;
-    /* 0x24 */ Vec3f pointD;
-    /* 0x30 */ Vec3s unk30;
-    /* 0x36 */ Vec3s unk36;
-    /* 0x3C */ f32 unk3C;
-} ColQuadParams; // size = 0x40
-
-typedef struct {
-    /* 0x00 */ Vec3f pointA;
-    /* 0x0C */ Vec3f pointB;
-    /* 0x18 */ Vec3f pointC;
-    /* 0x24 */ Vec3f pointD;
-} ColQuadParamsInit; // size = 0x30
-
-typedef struct {
-    /* 0x0 */ Vec3s loc;
-    /* 0x6 */ s16 radius;
-} ColSphereCollisionInfo; // size = 0x8
-
-typedef struct {
-    /* 0x00 */ Vec3s unk0;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ ColSphereCollisionInfo colInfo;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ u8 unk14;
-    /* 0x15 */ UNK_TYPE1 pad15[0x3];
-} ColSphereParams; // size = 0x18
-
-typedef struct {
-    /* 0x0 */ u8 unk0;
-    /* 0x1 */ ColSphereCollisionInfo unk1;
-    /* 0xA */ s16 unkA;
-} ColSphereParamsInit; // size = 0xC
-
-typedef struct {
-    /* 0x00 */ Vec3f pointA;
-    /* 0x0C */ Vec3f pointB;
-    /* 0x18 */ Vec3f pointC;
-    /* 0x24 */ Vec3f unitNormal;
-    /* 0x30 */ f32 unk30;
-} ColTriParams; // size = 0x34
-
-typedef struct {
-    /* 0x00 */ Vec3f unk0;
-    /* 0x0C */ Vec3f unkC;
-    /* 0x18 */ Vec3f unk18;
-} ColTriParamsInit; // size = 0x24
-
-typedef struct {
-    /* 0x00 */ ColCommonInit base;
-    /* 0x08 */ ColBodyInfoInit body;
-    /* 0x20 */ ColCylinderParams info;
-} ColCylinderInit; // size = 0x2C
-
-typedef struct {
-    /* 0x00 */ ColCommonInit base;
-    /* 0x08 */ ColBodyInfoInit body;
-    /* 0x20 */ ColQuadParamsInit params;
-} ColQuadInit; // size = 0x50
-
-typedef struct {
-    /* 0x00 */ ColBodyInfoInit body;
-    /* 0x18 */ ColSphereParamsInit params;
-} ColSphereGroupElementInit; // size = 0x24
-
-typedef struct {
-    /* 0x0 */ ColCommonInit base;
-    /* 0x6 */ UNK_TYPE1 pad6[0x2];
-    /* 0x8 */ u32 count;
-    /* 0xC */ ColSphereGroupElementInit* init;
-} ColSphereGroupInit; // size = 0x10
-
-typedef struct {
-    /* 0x00 */ ColCommonInit base;
-    /* 0x08 */ ColBodyInfoInit body;
-    /* 0x20 */ ColSphereParamsInit info;
-} ColSphereInit; // size = 0x2C
-
-typedef struct {
-    /* 0x00 */ ColBodyInfoInit body;
-    /* 0x18 */ ColTriParamsInit params;
-} ColTriInit; // size = 0x3C
-
-typedef struct {
-    /* 0x0 */ ColCommonInit base;
-    /* 0x8 */ u32 count;
-    /* 0xC */ ColTriInit* elemInit;
-} ColTriGroupInit; // size = 0x10
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 atFlags;
+    /* 0x02 */ u8 acFlags;
+    /* 0x03 */ u8 maskA; // Bitwise-And with maskB
+    /* 0x04 */ u8 maskB; // Bitwise-And with maskA
+    /* 0x05 */ u8 shape; // ColliderShape
+} ColliderInit; // size = 0x06
 
 typedef struct {
     /* 0x00 */ struct Actor* actor;
-    /* 0x04 */ struct Actor* collisionAT;
-    /* 0x08 */ struct Actor* collisionAC;
-    /* 0x0C */ struct Actor* collisionOT;
-    /* 0x10 */ u8 flagsAT;
-    /* 0x11 */ u8 flagsAC; // bit 1 - collision occured?
-    /* 0x12 */ u8 unk12;
-    /* 0x13 */ u8 unk13;
-    /* 0x14 */ u8 unk14;
-    /* 0x15 */ u8 type;
-    /* 0x16 */ UNK_TYPE1 pad16[0x2];
-} ColCommon; // size = 0x18
+    /* 0x04 */ u8 atFlags; // Compared to acFlags
+    /* 0x05 */ u8 acFlags; // Compared to atFlags
+    /* 0x06 */ u8 maskA;   // Bitwise-and compared to maskB
+    /* 0x07 */ u8 shape;   // ColliderShape
+} ColliderInit_Actor; // size = 0x08
 
 typedef struct {
-    /* 0x000 */ s16 ATgroupLength;
-    /* 0x002 */ u16 flags; // bit 0: collision bodies can't be added or removed, only swapped out
-    /* 0x004 */ ColCommon* ATgroup[50];
-    /* 0x0CC */ s32 ACgroupLength;
-    /* 0x0D0 */ ColCommon* ACgroup[60];
-    /* 0x1C0 */ s32 OTgroupLength;
-    /* 0x1C4 */ ColCommon* OTgroup[50];
-    /* 0x28C */ s32 group4Length;
-    /* 0x290 */ ColCommon* group4[3];
-} CollisionCheckContext; // size = 0x29C
-
-typedef struct ColBodyInfo_t {
-    /* 0x00 */ ColTouch toucher;
-    /* 0x08 */ ColBump bumper;
-    /* 0x14 */ u8 unk14;
-    /* 0x15 */ u8 unk15; // bit 0: can be toucher in AT-AC collision
-    /* 0x16 */ u8 unk16; // bit 0: can be bumper in AT-AC collision
-    /* 0x17 */ u8 unk17;
-    /* 0x18 */ ColCommon* unk18;
-    /* 0x1C */ ColCommon* unk1C;
-    /* 0x20 */ struct ColBodyInfo_t* unk20;
-    /* 0x24 */ struct ColBodyInfo_t* unk24;
-} ColBodyInfo; // size = 0x28
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 atFlags;
+    /* 0x02 */ u8 acFlags;
+    /* 0x03 */ u8 maskA; // Bitwise-And with maskB
+    /* 0x04 */ u8 shape; // Collider Type
+} ColliderInit_Set3; // size = 0x05
 
 typedef struct {
-    /* 0x00 */ ColBodyInfo body;
-    /* 0x28 */ ColSphereParams params;
-} ColSphereGroupElement; // size = 0x40
+    /* 0x00 */ struct Actor* actor;
+    /* 0x04 */ struct Actor* at;
+    /* 0x08 */ struct Actor* ac;
+    /* 0x0C */ struct Actor* oc;
+    /* 0x10 */ u8 atFlags;
+    /* 0x11 */ u8 acFlags; // bit 1 - collision occured?
+    /* 0x12 */ u8 maskA;
+    /* 0x13 */ u8 maskB;
+    /* 0x14 */ u8 type;
+    /* 0x15 */ u8 shape;
+} Collider; // size = 0x18
+
 
 typedef struct {
-    /* 0x00 */ ColBodyInfo body;
-    /* 0x28 */ ColTriParams params;
-} ColTri; // size = 0x5C
+    /* 0x0 */ u32 collidesWith;
+    /* 0x4 */ u8 effect;
+    /* 0x5 */ u8 damage;
+} ColliderTouch; // size = 0x8
+
 
 typedef struct {
-    /* 0x00 */ ColCommon base;
-    /* 0x18 */ ColBodyInfo body;
-    /* 0x40 */ ColCylinderParams params;
-} ColCylinder; // size = 0x4C
+    /* 0x00 */ u32 flags; // Collision Exclusion Mask
+    /* 0x04 */ u8 effect; // Damage Effect (Knockback, Fire, etc.)
+    /* 0x05 */ u8 defense;
+} ColliderBumpInit; // size = 0x08
 
 typedef struct {
-    /* 0x00 */ ColCommon base;
-    /* 0x18 */ ColBodyInfo body;
-    /* 0x40 */ ColQuadParams params;
-} ColQuad; // size = 0x80
+    /* 0x0 */ u32 collidesWith;
+    /* 0x4 */ u8 effect;
+    /* 0x5 */ u8 defense;
+    /* 0x6 */ Vec3s unk_06;
+} ColliderBump; // size = 0xC
+
 
 typedef struct {
-    /* 0x00 */ ColCommon base;
-    /* 0x18 */ ColBodyInfo body;
-    /* 0x40 */ ColSphereParams params;
-} ColSphere; // size = 0x58
+    /* 0x00 */ u8 bodyFlags;
+    /* 0x04 */ ColliderTouch toucher;
+    /* 0x0C */ ColliderBumpInit bumper;
+    /* 0x14 */ u8 toucherFlags; // Attack Toucher Flags
+    /* 0x15 */ u8 bumperFlags;  // Bumper Flags
+    /* 0x16 */ u8 bodyFlags2;
+} ColliderBodyInit; // size = 0x18
+
+typedef struct ColliderBody {
+    /* 0x00 */ ColliderTouch toucher;
+    /* 0x08 */ ColliderBump bumper;
+    /* 0x14 */ u8 flags; // affects sfx reaction when attacked by Link
+    /* 0x15 */ u8 toucherFlags; // bit 0: can be toucher in AT-AC collision
+    /* 0x16 */ u8 bumperFlags; // bit 0: can be bumper in AT-AC collision
+    /* 0x17 */ u8 ocFlags;
+    /* 0x18 */ Collider* atHit;                // object touching this object's AT collider
+    /* 0x1C */ Collider* acHit;                // object touching this object's AC collider
+    /* 0x20 */ struct ColliderBody* atHitItem; // element that hit the AT collider
+    /* 0x24 */ struct ColliderBody* acHitItem; // element that hit the AC collider
+} ColliderBody; // size = 0x28
+
+/**************************************************/
+/*                  Colliders                     */
+/**************************************************/
+
+/***************** Cylinder *******************/
+/**********************************************/
 
 typedef struct {
-    /* 0x00 */ ColCommon base;
-    /* 0x18 */ u32 count;
-    /* 0x1C */ ColSphereGroupElement* spheres;
-} ColSphereGroup; // size = 0x20
+    /* 0x00 */ ColliderInit base;
+    /* 0x08 */ ColliderBodyInit body;
+    /* 0x20 */ Cylinder16 dim;
+} ColliderCylinderInit; // size = 0x2C
 
 typedef struct {
-    /* 0x00 */ ColCommon base;
-    /* 0x18 */ u32 count;
-    /* 0x1C */ ColTri* tris;
-} ColTriGroup; // size = 0x20
+    /* 0x00 */ ColliderInit_Actor base;
+    /* 0x08 */ ColliderBodyInit body;
+    /* 0x20 */ Cylinder16 dim;
+} ColliderCylinderInit_Actor; // size = 0x2C
+
+typedef struct {
+    /* 0x00 */ ColliderInit_Set3 base;
+    /* 0x08 */ ColliderBodyInit body;
+    /* 0x20 */ Cylinder16 dim;
+} ColliderCylinderInit_Set3; // size = 0x2C
+
+typedef struct {
+    /* 0x00 */ Collider base;
+    /* 0x18 */ ColliderBody body;
+    /* 0x40 */ Cylinder16 dim;
+} ColliderCylinder; // size = 0x4C
+
+
+/******************* Sphere *******************/
+/**********************************************/
+
+typedef struct {
+    /* 0x00 */ u8 joint;
+    /* 0x02 */ Sphere16 modelSphere;
+    /* 0x0A */ s16 scale;
+} ColliderJntSphItemDimInit; // size = 0x0C
+
+typedef struct {
+    /* 0x00 */ Sphere16 modelSphere; // model space sphere
+    /* 0x08 */ Sphere16 worldSphere; // world space sphere
+    /* 0x10 */ f32 scale;            // world space sphere = model * scale * 0.01
+    /* 0x14 */ u8 joint;
+} ColliderJntSphItemDim; // size = 0x18
+
+typedef struct {
+    /* 0x00 */ ColliderInit base;
+    /* 0x08 */ ColliderBodyInit body;
+    /* 0x20 */ ColliderJntSphItemDimInit dim;
+} ColliderSphInit; // size = 0x2C
+
+typedef struct {
+    /* 0x00 */ Collider base;
+    /* 0x18 */ ColliderBody body;
+    /* 0x40 */ ColliderJntSphItemDim dim;
+} ColliderSph; // size = 0x58
+
+typedef struct {
+    /* 0x00 */ ColliderBodyInit body;
+    /* 0x18 */ ColliderJntSphItemDimInit dim;
+} ColliderJntSphItemInit; // size = 0x24
+
+typedef struct {
+    /* 0x00 */ ColliderBody body;
+    /* 0x28 */ ColliderJntSphItemDim dim;
+} ColliderJntSphItem; // size = 0x40
+
+typedef struct {
+    /* 0x0 */ ColliderInit base;
+    /* 0x8 */ s32 count;
+    /* 0xC */ ColliderJntSphItemInit* list;
+} ColliderJntSphInit; // size = 0x10
+
+typedef struct {
+    /* 0x00 */ ColliderInit_Actor base;
+    /* 0x08 */ s32 count;
+    /* 0x0C */ ColliderJntSphItemInit* list;
+} ColliderJntSphInit_Actor; // size = 0x10
+
+typedef struct {
+    /* 0x00 */ ColliderInit_Set3 base;
+    /* 0x08 */ s32 count;
+    /* 0x0C */ ColliderJntSphItemInit* list;
+} ColliderJntSphInit_Set3; // size = 0x10
+
+typedef struct {
+    /* 0x00 */ Collider base;
+    /* 0x18 */ s32 count;
+    /* 0x1C */ ColliderJntSphItem* list;
+} ColliderJntSph; // size = 0x20
+
+
+/******************* Tri **********************/
+/**********************************************/
+
+typedef struct {
+    /* 0x00 */ Vec3f vtx[3];
+} ColliderTrisItemDimInit; // size = 0x24
+
+typedef struct {
+    /* 0x00 */ ColliderBodyInit body;
+    /* 0x18 */ ColliderTrisItemDimInit dim;
+} ColliderTrisItemInit; // size = 0x3C
+
+typedef struct {
+    /* 0x00 */ ColliderBody body;
+    /* 0x28 */ TriNorm dim;
+} ColliderTrisItem; // size = 0x5C
+
+typedef struct {
+    /* 0x0 */ ColliderInit base;
+    /* 0x8 */ s32 count;
+    /* 0xC */ ColliderTrisItemInit* list;
+} ColliderTrisInit; // size = 0x10
+
+typedef struct {
+    /* 0x00 */ ColliderInit_Set3 base;
+    /* 0x08 */ s32 count;
+    /* 0x0C */ ColliderTrisItemInit* list;
+} ColliderTrisInit_Set3; // size = 0x10
+
+typedef struct {
+    /* 0x00 */ Collider base;
+    /* 0x18 */ s32 count;
+    /* 0x1C */ ColliderTrisItem* list;
+} ColliderTris; // size = 0x20
+
+
+/****************** Quad **********************/
+/**********************************************/
+
+typedef struct {
+    /* 0x00 */ Vec3f quad[4];
+} ColliderQuadDimInit; // size = 0x30
+
+typedef struct {
+    /* 0x00 */ Vec3f quad[4];
+    /* 0x30 */ Vec3s dcMid; // midpoint of vectors d, c
+    /* 0x36 */ Vec3s baMid; // midpoint of vectors b, a
+    /* 0x3C */ f32 unk_3C;
+} ColliderQuadDim; // size = 0x40
+
+typedef struct {
+    /* 0x00 */ ColliderInit base;
+    /* 0x08 */ ColliderBodyInit body;
+    /* 0x20 */ ColliderQuadDimInit dim;
+} ColliderQuadInit; // size = 0x50
+
+typedef struct {
+    /* 0x00 */ ColliderInit_Set3 base;
+    /* 0x08 */ ColliderBodyInit body;
+    /* 0x20 */ ColliderQuadDimInit dim;
+} ColliderQuadInit_Set3; // size = 0x50
+
+typedef struct {
+    /* 0x00 */ Collider base;
+    /* 0x18 */ ColliderBody body;
+    /* 0x40 */ ColliderQuadDim dim;
+} ColliderQuad; // size = 0x80
+
 
 #endif

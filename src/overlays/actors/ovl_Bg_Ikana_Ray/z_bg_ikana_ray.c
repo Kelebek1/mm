@@ -27,7 +27,7 @@ const ActorInit Bg_Ikana_Ray_InitVars = {
 };
 
 // TODO better formatting
-ColCylinderInit bgIkanaRayCylinderInit = {
+ColliderCylinderInit bgIkanaRayCylinderInit = {
     { 10, 33, 0, 0, 0, 1 },
     { 0, { 0x00200000, 0, 0 }, { 0, 0, 0 }, 25, 0, 1 },
     { 90, 420, 65116}
@@ -42,14 +42,14 @@ InitChainEntry  bgIkanaRayCompInit[] = {
 };
 
 void BgIkanaRay_Init(Actor* thisx, GlobalContext* globalCtx) {
-    ColCylinder* collision = &THIS->collision;
+    ColliderCylinder* collision = &THIS->collision;
     u32 pad;
 
     Actor_ProcessInitChain(thisx, bgIkanaRayCompInit);
 
-    Collision_InitCylinderDefault(globalCtx, collision);
-    Collision_InitCylinderWithData(globalCtx, collision, thisx, &bgIkanaRayCylinderInit);
-    Collision_CylinderMoveToActor(thisx, &THIS->collision);
+    Collider_InitCylinder(globalCtx, collision);
+    Collider_SetCylinder(globalCtx, collision, thisx, &bgIkanaRayCylinderInit);
+    Collider_CylinderUpdate(thisx, &THIS->collision);
 
     THIS->animatedTextures = (AnimatedTexture*)Lib_PtrSegToVirt(object_ikana_obj_001228);
 
@@ -61,8 +61,8 @@ void BgIkanaRay_Init(Actor* thisx, GlobalContext* globalCtx) {
 }
 
 void BgIkanaRay_Destroy(Actor* thisx, GlobalContext* globalCtx) {
-    ColCylinder* collision = &THIS->collision;
-    Collision_FiniCylinder(globalCtx, collision);
+    ColliderCylinder* collision = &THIS->collision;
+    Collider_DestroyCylinder(globalCtx, collision);
 }
 
 void BgIkanaRay_SetDeactivated(BgIkanaRay* this) {
@@ -84,7 +84,7 @@ void BgIkanaRay_SetActivated(BgIkanaRay* this) {
 }
 
 void BgIkanaRay_UpdateActivated(BgIkanaRay* this, GlobalContext* globalCtx) {
-    Collision_AddAT(globalCtx, &globalCtx->colCheckCtx, &this->collision.base);
+    CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->collision.base);
 }
 
 void BgIkanaRay_Update(Actor* thisx, GlobalContext* globalCtx) {
