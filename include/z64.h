@@ -456,7 +456,7 @@ typedef void(*func_ptr)(void);
 
 typedef void(*actor_init_var_func)(u8*, InitChainEntry*);
 
-typedef void(*light_map_directional_func)(LightMapper* mapper, void* params, Vec3f* pos);
+typedef void(*light_map_directional_func)(Lights* light, void* params, Vec3f* pos);
 
 typedef void(*osCreateThread_func)(void*);
 
@@ -530,13 +530,6 @@ typedef struct {
     /* 0x18 */ s16 unk18;
     /* 0x1A */ s16 unk1A;
 } s80874650; // size = 0x1C
-
-typedef struct {
-    /* 0x00 */ f32 x[4];
-    /* 0x10 */ f32 y[4];
-    /* 0x20 */ f32 z[4];
-    /* 0x30 */ f32 w[4];
-} z_Matrix; // size = 0x40
 
 typedef struct {
     /* 0x00 */ Vec3f scale;
@@ -823,8 +816,8 @@ typedef struct {
     /* 0x24 */ u16 unk24;
     /* 0x26 */ UNK_TYPE1 unk26;
     /* 0x27 */ UNK_TYPE1 unk27;
-    /* 0x28 */ LightInfoDirectional unk28;
-    /* 0x36 */ LightInfoDirectional unk36;
+    /* 0x28 */ LightInfo unk28;
+    /* 0x36 */ LightInfo unk36;
     /* 0x44 */ UNK_TYPE1 unk44;
     /* 0x45 */ UNK_TYPE1 unk45;
     /* 0x46 */ UNK_TYPE1 unk46;
@@ -1079,6 +1072,11 @@ struct FaultAddrConvClient {
     /* 0x8 */ void* param;
 }; // size = 0xC
 
+typedef enum {
+    MTXMODE_NEW,  // generates a new matrix
+    MTXMODE_APPLY // applies transformation to the current matrix
+} MatrixMode;
+
 typedef struct FaultClient FaultClient;
 
 struct FaultClient {
@@ -1266,7 +1264,7 @@ typedef void(*draw_func)(GlobalContext* ctxt, s16 index);
 
 typedef void(*global_context_func)(GlobalContext*);
 
-typedef void(*light_map_positional_func)(LightMapper* mapper, void* params, GlobalContext* ctxt);
+typedef void(*light_map_positional_func)(Lights* light, void* params, GlobalContext* ctxt);
 
 typedef void(*room_draw_func)(GlobalContext* ctxt, Room* room, u32 flags);
 
@@ -1404,8 +1402,8 @@ typedef struct ActorContext ActorContext;
 typedef struct s800B948C s800B948C;
 
 struct FireObjLight {
-    /* 0x00 */ z_Light* light;
-    /* 0x04 */ LightInfoPositional lightInfo;
+    /* 0x00 */ LightNode* light;
+    /* 0x04 */ LightInfo lightInfo;
     /* 0x12 */ u8 unk12;
 }; // size = 0x13
 
@@ -1480,7 +1478,7 @@ struct Camera {
 }; // size = 0x178
 
 typedef struct {
-    /* 0x00 */ z_Matrix displayMatrix;
+    /* 0x00 */ MtxF displayMatrix;
     /* 0x40 */ Actor* actor;
     /* 0x44 */ Vec3f location;
     /* 0x50 */ u8 flags; // bit 0 - footmark fades out
@@ -1598,7 +1596,7 @@ struct GlobalContext {
     /* 0x00814 */ u8 unk814;
     /* 0x00815 */ u8 unk815;
     /* 0x00816 */ UNK_TYPE1 pad816[0x2];
-    /* 0x00818 */ LightingContext lightCtx;
+    /* 0x00818 */ LightContext lightCtx;
     /* 0x00828 */ u32 unk828;
     /* 0x0082C */ UNK_TYPE1 pad82C[0x4];
     /* 0x00830 */ CollisionContext colCtx;
@@ -1624,9 +1622,9 @@ struct GlobalContext {
     /* 0x18761 */ UNK_TYPE1 pad18761[0x3];
     /* 0x18764 */ TransitionActorInit* transitionActorList;
     /* 0x18768 */ UNK_TYPE1 pad18768[0x48];
-    /* 0x187B0 */ z_Matrix unk187B0;
+    /* 0x187B0 */ MtxF unk187B0;
     /* 0x187F0 */ UNK_TYPE1 pad187F0[0xC];
-    /* 0x187FC */ z_Matrix unk187FC;
+    /* 0x187FC */ MtxF unk187FC;
     /* 0x1883C */ UNK_TYPE1 pad1883C[0x4];
     /* 0x18840 */ u32 unk18840;
     /* 0x18844 */ u8 unk18844;
@@ -1786,10 +1784,5 @@ typedef struct {
     /* 0x10 */ u16* tlut;
     /* 0x14 */ Gfx* monoDl;
 } VisMono; // size = 0x18
-
-typedef enum {
-    MTXMODE_NEW,  // generates a new matrix
-    MTXMODE_APPLY // applies transformation to the current matrix
-} MatrixMode;
 
 #endif

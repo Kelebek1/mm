@@ -1,9 +1,10 @@
 #include <ultra64.h>
 #include <global.h>
 
-//From OOT
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-#define DECR(x) ((x) == 0 ? 0 : ((x) -= 1))
+extern Gfx D_04076BC0[];
+extern Gfx D_04075A40[];
+extern Gfx D_04077480[];
+extern Gfx D_04075B30[];
 
 GLOBAL_ASM("asm/non_matchings/z_actor//Actor_PrintLists.asm")
 
@@ -14,19 +15,250 @@ void Actor_SetDrawParams(ActorShape* iParm1, f32 yDisplacement, actor_shadow_dra
     iParm1->alphaScale = 255;
 }
 
-GLOBAL_ASM("asm/non_matchings/z_actor//Actor_PostDraw.asm")
+void Actor_PostDraw(Actor* actor, Lights* lights, GlobalContext* globalCtx, Gfx* dlist, ColorRGBA8* color) {
+    f32 temp1;
+    f32 temp2;
+    MtxF sp60;
 
-GLOBAL_ASM("asm/non_matchings/z_actor//func_800B3FC0.asm")
+    if (actor->floorPoly != NULL) {
+        temp1 = actor->posRot.pos.y - actor->groundY;
 
-GLOBAL_ASM("asm/non_matchings/z_actor//func_800B4024.asm")
+        if (temp1 >= -50.0f && temp1 < 500.0f) {
+            OPEN_DISPS(globalCtx->state.gfxCtx);
 
-GLOBAL_ASM("asm/non_matchings/z_actor//func_800B4088.asm")
+            oGfxCtx->polyOpa.p = Gfx_CallSetupDL(oGfxCtx->polyOpa.p, 0x2C);
 
-GLOBAL_ASM("asm/non_matchings/z_actor//func_800B40B8.asm")
+            gDPSetCombineLERP(oGfxCtx->polyOpa.p++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED, 0,
+                              0, 0, COMBINED);
 
-GLOBAL_ASM("asm/non_matchings/z_actor//func_800B40E0.asm")
+            temp1 = (temp1 < 0.0f) ? 0.0f : ((temp1 > 150.0f) ? 150.0f : temp1);
+            temp2 = 1.0f - (temp1 * (1.f / 350));
+            if ((temp1 * (1.f / 350)) > 1.0f) {
+                temp2 = 0.0f;
+            }
 
-GLOBAL_ASM("asm/non_matchings/z_actor//func_800B42F8.asm")
+            if (color != NULL) {
+                gDPSetPrimColor(oGfxCtx->polyOpa.p++, 0, 0, color->red, color->green, color->blue,
+                                (u8)(actor->shape.alphaScale * temp2));
+            } else {
+                gDPSetPrimColor(oGfxCtx->polyOpa.p++, 0, 0, 0, 0, 0, (u8)(actor->shape.alphaScale * temp2));
+            }
+
+            func_800C0094(actor->floorPoly, actor->posRot.pos.x, actor->groundY, actor->posRot.pos.z, &sp60);
+            SysMatrix_SetCurrentState(&sp60);
+
+            if ((dlist != D_04076BC0) || (actor->scale.x != actor->scale.z)) {
+                SysMatrix_InsertYRotation_s(actor->shape.rot.y, MTXMODE_APPLY);
+            }
+
+            temp2 *= actor->shape.scale;
+            SysMatrix_InsertScale(actor->scale.x * temp2, 1.0f, actor->scale.z * temp2, MTXMODE_APPLY);
+
+            gSPMatrix(oGfxCtx->polyOpa.p++, SysMatrix_AppendStateToPolyOpaDisp(globalCtx->state.gfxCtx),
+                      G_MTX_MODELVIEW | G_MTX_LOAD);
+            gSPDisplayList(oGfxCtx->polyOpa.p++, dlist);
+
+            CLOSE_DISPS(globalCtx->state.gfxCtx);
+        }
+    }
+}
+
+// ActorShadow_DrawFunc_Circle
+void func_800B3FC0(Actor *actor, Lights* lights, GlobalContext *globalCtx) {
+    if (actor->bgCheckFlags & 0x400) {
+        func_800B4AEC(globalCtx, actor, 50.0f);
+    }
+    Actor_PostDraw(actor, lights, globalCtx, D_04076BC0, NULL);
+}
+
+void func_800B4024(Actor *actor, Lights* lights, GlobalContext *globalCtx) {
+    if (actor->bgCheckFlags & 0x400) {
+        func_800B4AEC(globalCtx, actor, 50.0f);
+    }
+    Actor_PostDraw(actor, lights, globalCtx, D_04075A40, NULL);
+}
+
+// ActorShadow_DrawFunc_WhiteCircle
+void func_800B4088(Actor *actor, Lights* lights, GlobalContext *ctxt) {
+    static ColorRGBA8 D_801AEC80 = { 255, 255, 255, 255 };
+
+    Actor_PostDraw(actor, lights, ctxt, D_04076BC0, &D_801AEC80);
+}
+
+// ActorShadow_DrawFunc_Squiggly
+void func_800B40B8(Actor *actor, Lights* lights, GlobalContext *ctxt) {
+    Actor_PostDraw(actor, lights, ctxt, D_04077480, NULL);
+}
+
+void func_800B40E0(GlobalContext* globalCtx, Light* light, MtxF* arg2, s32 arg3, f32 arg4, f32 arg5, f32 arg6) {
+    s32 pad;
+    s16 sp58;
+    f32 temp1;
+    f32 temp2;
+
+    s32 pad2; // macro temp?
+    OPEN_DISPS(globalCtx->state.gfxCtx);
+
+    gDPSetPrimColor(oGfxCtx->polyOpa.p++, 0, 0, 0, 0, 0,
+                    (u8)(((arg3 * 0.00005f) > 1.0f ? 1.0f : (arg3 * 0.00005f)) * arg4));
+
+    temp2 = light->l.dir[0];
+    temp1 = light->l.dir[2];
+    sp58 = atans_flip(temp1, temp2);
+    arg6 *= (4.5f - (light->l.dir[1] * 0.035f));
+    arg6 = (arg6 < 1.0f) ? 1.0f : arg6;
+    SysMatrix_SetCurrentState(arg2);
+    SysMatrix_InsertYRotation_s(sp58, MTXMODE_APPLY);
+    SysMatrix_InsertScale(arg5, 1.0f, arg5 * arg6, MTXMODE_APPLY);
+
+    gSPMatrix(oGfxCtx->polyOpa.p++, SysMatrix_AppendStateToPolyOpaDisp(globalCtx->state.gfxCtx),
+              G_MTX_MODELVIEW | G_MTX_LOAD);
+    gSPDisplayList(oGfxCtx->polyOpa.p++, D_04075B30);
+
+    CLOSE_DISPS(globalCtx->state.gfxCtx);
+}
+
+// ActorShadow_DrawFunc_Teardrop
+void func_800B42F8(ActorPlayer* player, Lights* lights, GlobalContext* globalCtx) {
+    f32 phi_f2;
+    f32 oldScale;
+    u8 temp_14;
+    s32 pad[1];
+    f32 temp_f26;
+    
+
+    MtxF sp13C;
+    MtxF spFC;
+    BgPolygon* spF8;
+    s32 spF4;
+    f32 spEC[2];
+
+    f32 temp_10;
+    f32 temp_f24;
+    s32 temp_a3;
+    s32 phi_s1;
+    f32 temp_f26_2;
+    f32 temp_f22_2;
+    s32 i;
+
+    Vec3f* phi_s7;
+    s32 temp_s6;
+    f32 temp_f0;
+    s32 pad2;
+    f32* spBC;
+    s32 spB8;
+
+    temp_f26 = player->base.posRot.pos.y - player->base.groundY;
+    
+    if (temp_f26 > 0.0f) {
+        temp_10 = player->base.shape.scale;
+        temp_14 = player->base.shape.alphaScale;
+        if ((player->base.id == ACTOR_PLAYER) && (player->unkA74 & 0x8000)) {
+            oldScale = player->base.scale.z;
+            if (1){};
+            player->base.scale.z += 0.03f * fabsf(Math_Coss(player->unk_AAA));
+            player->base.shape.scale *= 0.2f;
+            player->base.shape.alphaScale = player->base.shape.alphaScale * CLAMP_MAX(temp_f26 * 0.03f, 1.0f);
+            Actor_PostDraw(&player->base, lights, globalCtx, D_04076BC0, NULL);
+            player->base.scale.z = oldScale;
+            player->base.shape.scale = temp_10;
+        } else {
+            player->base.shape.scale *= 0.3f;
+            player->base.shape.alphaScale = player->base.shape.alphaScale * CLAMP_MAX((temp_f26 - 20.0f) * 0.02f, 1.0f);
+            func_800B3FC0(&player->base, lights, globalCtx);
+            player->base.shape.scale = temp_10;
+        }
+
+        player->base.shape.alphaScale = temp_14;
+    }
+
+    if (temp_f26 < 200.0f) {
+        temp_s6 = lights->numLights - 2;
+        phi_s7 = &player->base.unk_D4[0];
+        spBC = &spEC[0];
+
+        OPEN_DISPS(globalCtx->state.gfxCtx);
+
+        oGfxCtx->polyOpa.p = Gfx_CallSetupDL(oGfxCtx->polyOpa.p, 0x2C);
+        player->base.shape.unk_15 = 0;
+        spB8 = 2;
+
+        for (i = 0; i < 2; i++, spB8 >>= 1) {
+            phi_s7->y += 50.0f;
+            *spBC = func_80169100(globalCtx, &sp13C, &spF8, &spF4, phi_s7);
+            phi_s7->y -= 50.0f;
+            temp_f26 = phi_s7->y - *spBC;
+
+            if ((temp_f26 >= -1.0f) && (temp_f26 < 500.0f)) {
+                Light* phi_s0 = &lights->l.l[0];
+                s32 phi_s2 = 0;
+
+                if (temp_f26 <= 10.0f) {
+                    player->base.shape.unk_15 |= spB8;
+                    if ((player->base.waterY < 0.0f) && (spF4 == 0x32) && (player->base.shape.unk_17 & spB8)) {
+                        if (func_800C9C24(&globalCtx->colCtx, spF8, spF4, 1) != 0) {
+                            Matrix_Copy(&sp13C, &spFC);
+                            Matrix_YRotation(&spFC, player->base.shape.rot.y);
+                            EffFootmark_Add(globalCtx, &spFC, &player->base, i, phi_s7, player->base.shape.scale * 0.3f, IREG(88) + 0x50, IREG(89) + 0x3C, IREG(90) + 0x28, 0x7530, 0xC8, 0x3C);
+                        }
+                        player->base.shape.unk_17 &= ~spB8;
+                    }
+                }
+
+                if (30.0f < temp_f26) {
+                    temp_f26 = 30.0f;
+                }
+
+                temp_f24 = player->base.shape.alphaScale * (1.0f - (temp_f26 * (1.0f / 30)));
+
+                temp_f26_2 = 1.0f - (temp_f26 * (1.0f / 70));
+                temp_f22_2 = (player->base.shape.scale * temp_f26_2) * player->base.scale.x;
+
+                phi_s2 = 0;
+                phi_s0 = &lights->l.l[0];
+
+                for (phi_s1 = 0; phi_s1 < temp_s6; phi_s1++) {
+                    if (phi_s0->l.dir[1] > 0) {
+                        temp_a3 = (phi_s0->l.col[0] + phi_s0->l.col[1] + phi_s0->l.col[2]) * ABS2(phi_s0->l.dir[1]);
+                        if (temp_a3 > 0) {
+                            phi_s2 += temp_a3;
+                            func_800B40E0(globalCtx, phi_s0, &sp13C, temp_a3, temp_f24, temp_f22_2, temp_f26_2);
+                        }
+                    }
+                    phi_s0++;
+                }
+
+                for (phi_s1 = 0; phi_s1 < 2; phi_s1++) {
+                    if (phi_s0->l.dir[1] > 0) {
+                        temp_a3 = (ABS2(phi_s0->l.dir[1]) * (phi_s0->l.col[0] + phi_s0->l.col[1] + phi_s0->l.col[2])) -
+                                  (0, (phi_s2 * 8));
+                        if (temp_a3 > 0) {
+                            func_800B40E0(globalCtx, phi_s0, &sp13C, temp_a3, temp_f24, temp_f22_2, temp_f26_2);
+                        }
+                    }
+                    phi_s0++;
+                }
+            }
+
+            phi_s7++; 
+            spBC++; 
+        }
+
+        if (!(player->base.bgCheckFlags & 1)) {
+            player->base.shape.unk_15 = 0;
+        } else if (player->base.shape.unk_15 == 3) {
+            temp_f0 = player->base.unk_D4[0].y - player->base.unk_D4[1].y;
+
+            if ((spEC[0] + temp_f0) < (spEC[1] - temp_f0)) {
+                player->base.shape.unk_15 = 2;
+            } else {
+                player->base.shape.unk_15 = 1;
+            }
+        }
+
+        CLOSE_DISPS(globalCtx->state.gfxCtx);
+    }
+}
 
 GLOBAL_ASM("asm/non_matchings/z_actor//func_800B4A98.asm")
 
@@ -186,24 +418,24 @@ void Actor_MarkForDeath(Actor* actor) {
 }
 
 void Actor_InitCurrPosition(Actor* actor) {
-    actor->currPosRot = actor->initPosRot;
+    actor->posRot = actor->initPosRot;
 }
 
 void Actor_SetHeight(Actor* actor, f32 height) {
-    actor->topPosRot.pos.x = actor->currPosRot.pos.x;
-    actor->topPosRot.pos.y = actor->currPosRot.pos.y + height;
-    actor->topPosRot.pos.z = actor->currPosRot.pos.z;
-    actor->topPosRot.rot.x = actor->currPosRot.rot.x;
-    actor->topPosRot.rot.y = actor->currPosRot.rot.y;
-    actor->topPosRot.rot.z = actor->currPosRot.rot.z;
+    actor->topPosRot.pos.x = actor->posRot.pos.x;
+    actor->topPosRot.pos.y = actor->posRot.pos.y + height;
+    actor->topPosRot.pos.z = actor->posRot.pos.z;
+    actor->topPosRot.rot.x = actor->posRot.rot.x;
+    actor->topPosRot.rot.y = actor->posRot.rot.y;
+    actor->topPosRot.rot.z = actor->posRot.rot.z;
 }
 
 void Actor_SetRotationFromDrawRotation(Actor* actor) {
-    actor->currPosRot.rot = actor->shape.rot;
+    actor->posRot.rot = actor->shape.rot;
 }
 
 void Actor_InitDrawRotation(Actor* actor) {
-    actor->shape.rot = actor->currPosRot.rot;
+    actor->shape.rot = actor->posRot.rot;
 }
 
 void Actor_SetScale(Actor* actor, f32 scale) {
@@ -222,7 +454,7 @@ void Actor_InitToDefaultValues(Actor* actor, GlobalContext* ctxt) {
     Actor_InitCurrPosition(actor);
     Actor_InitDrawRotation(actor);
     Actor_SetHeight(actor, 0);
-    Math_Vec3f_Copy(&actor->lastPos, &actor->currPosRot.pos);
+    Math_Vec3f_Copy(&actor->lastPos, &actor->posRot.pos);
     Actor_SetScale(actor, 0.01);
     actor->unk1F = 3;
     actor->minYVelocity = -20.0f;
@@ -263,9 +495,9 @@ void Actor_SetMovementScale(s32 scale) {
 
 #ifdef NON_MATCHING
 void Actor_ApplyMovement(Actor* actor) {
-    actor->currPosRot.pos.x += ((actor->velocity.x * actorMovementScale) + actor->unkA0.displacement.x);
-    actor->currPosRot.pos.y += ((actor->velocity.y * actorMovementScale) + actor->unkA0.displacement.y);
-    actor->currPosRot.pos.z += ((actor->velocity.z * actorMovementScale) + actor->unkA0.displacement.z);
+    actor->posRot.pos.x += ((actor->velocity.x * actorMovementScale) + actor->unkA0.displacement.x);
+    actor->posRot.pos.y += ((actor->velocity.y * actorMovementScale) + actor->unkA0.displacement.y);
+    actor->posRot.pos.z += ((actor->velocity.z * actorMovementScale) + actor->unkA0.displacement.z);
 }
 #else
 GLOBAL_ASM("asm/non_matchings/z_actor//Actor_ApplyMovement.asm")
@@ -273,9 +505,9 @@ GLOBAL_ASM("asm/non_matchings/z_actor//Actor_ApplyMovement.asm")
 
 #ifdef NON_MATCHING
 void Actor_SetVelocityYRotationAndGravity(Actor* actor) {
-    actor->velocity.x = actor->speedXZ * Math_Sins(actor->currPosRot.rot.x);
+    actor->velocity.x = actor->speedXZ * Math_Sins(actor->posRot.rot.x);
     actor->velocity.y = actor->velocity.y + actor->gravity;
-    actor->velocity.z = actor->speedXZ * Math_Coss(actor->currPosRot.rot.x);
+    actor->velocity.z = actor->speedXZ * Math_Coss(actor->posRot.rot.x);
 
     if (actor->velocity.y < actor->minYVelocity) {
         actor->velocity.y = actor->minYVelocity;
@@ -291,10 +523,10 @@ void Actor_SetVelocityAndMoveYRotationAndGravity(Actor* actor) {
 }
 
 void Actor_SetVelocityXYRotation(Actor* actor) {
-    f32 velX =  Math_Coss(actor->currPosRot.rot.x) * actor->speedXZ;
-    actor->velocity.x = Math_Sins(actor->currPosRot.rot.y) * velX;
-    actor->velocity.y = Math_Sins(actor->currPosRot.rot.x) * actor->speedXZ;
-    actor->velocity.z = Math_Coss(actor->currPosRot.rot.y) * velX;
+    f32 velX =  Math_Coss(actor->posRot.rot.x) * actor->speedXZ;
+    actor->velocity.x = Math_Sins(actor->posRot.rot.y) * velX;
+    actor->velocity.y = Math_Sins(actor->posRot.rot.x) * actor->speedXZ;
+    actor->velocity.z = Math_Coss(actor->posRot.rot.y) * velX;
 }
 
 void Actor_SetVelocityAndMoveXYRotation(Actor* actor) {
@@ -303,10 +535,10 @@ void Actor_SetVelocityAndMoveXYRotation(Actor* actor) {
 }
 
 void Actor_SetVelocityXYRotationReverse(Actor* actor) {
-    f32 velX =  Math_Coss(-actor->currPosRot.rot.x) * actor->speedXZ;
-    actor->velocity.x = Math_Sins(actor->currPosRot.rot.y) * velX;
-    actor->velocity.y = Math_Sins(-actor->currPosRot.rot.x) * actor->speedXZ;
-    actor->velocity.z = Math_Coss(actor->currPosRot.rot.y) * velX;
+    f32 velX =  Math_Coss(-actor->posRot.rot.x) * actor->speedXZ;
+    actor->velocity.x = Math_Sins(actor->posRot.rot.y) * velX;
+    actor->velocity.y = Math_Sins(-actor->posRot.rot.x) * actor->speedXZ;
+    actor->velocity.z = Math_Coss(actor->posRot.rot.y) * velX;
 }
 
 void Actor_SetVelocityAndMoveXYRotationReverse(Actor* actor) {
@@ -319,7 +551,7 @@ GLOBAL_ASM("asm/non_matchings/z_actor//func_800B6C04.asm")
 GLOBAL_ASM("asm/non_matchings/z_actor//func_800B6C58.asm")
 
 s16 Actor_YawBetweenActors(Actor* from, Actor* to) {
-    return Math_Vec3f_Yaw(&from->currPosRot.pos, &to->currPosRot.pos);
+    return Math_Vec3f_Yaw(&from->posRot.pos, &to->posRot.pos);
 }
 
 s16 Actor_YawBetweenActorsTop(Actor* from, Actor* to) {
@@ -327,11 +559,11 @@ s16 Actor_YawBetweenActorsTop(Actor* from, Actor* to) {
 }
 
 s16 Actor_YawToPoint(Actor* actor, Vec3f* point) {
-    return Math_Vec3f_Yaw(&actor->currPosRot.pos, point);
+    return Math_Vec3f_Yaw(&actor->posRot.pos, point);
 }
 
 s16 Actor_PitchBetweenActors(Actor* from, Actor* to) {
-    return Math_Vec3f_Pitch(&from->currPosRot.pos, &to->currPosRot.pos);
+    return Math_Vec3f_Pitch(&from->posRot.pos, &to->posRot.pos);
 }
 
 s16 Actor_PitchBetweenActorsTop(Actor* from, Actor* to) {
@@ -339,23 +571,23 @@ s16 Actor_PitchBetweenActorsTop(Actor* from, Actor* to) {
 }
 
 s16 Actor_PitchToPoint(Actor* actor, Vec3f* point) {
-    return Math_Vec3f_Pitch(&actor->currPosRot.pos, point);
+    return Math_Vec3f_Pitch(&actor->posRot.pos, point);
 }
 
 f32 Actor_DistanceBetweenActors(Actor* actor1, Actor* actor2) {
-    return Math_Vec3f_DistXYZ(&actor1->currPosRot.pos, &actor2->currPosRot.pos);
+    return Math_Vec3f_DistXYZ(&actor1->posRot.pos, &actor2->posRot.pos);
 }
 
 f32 Actor_DistanceToPoint(Actor* actor, Vec3f* point) {
-    return Math_Vec3f_DistXYZ(&actor->currPosRot.pos, point);
+    return Math_Vec3f_DistXYZ(&actor->posRot.pos, point);
 }
 
 f32 Actor_XZDistanceBetweenActors(Actor* actor1, Actor* actor2) {
-    return Math_Vec3f_DistXZ(&actor1->currPosRot.pos, &actor2->currPosRot.pos);
+    return Math_Vec3f_DistXZ(&actor1->posRot.pos, &actor2->posRot.pos);
 }
 
 f32 Actor_XZDistanceToPoint(Actor* actor, Vec3f* point) {
-    return Math_Vec3f_DistXZ(&actor->currPosRot.pos, point);
+    return Math_Vec3f_DistXZ(&actor->posRot.pos, point);
 }
 
 void Actor_CalcOffsetOrientedToDrawRotation(Actor* actor, Vec3f* offset, Vec3f* point) {
@@ -366,15 +598,15 @@ void Actor_CalcOffsetOrientedToDrawRotation(Actor* actor, Vec3f* offset, Vec3f* 
 
     cos_rot_y = Math_Coss(actor->shape.rot.y);
     sin_rot_y = Math_Sins(actor->shape.rot.y);
-    imm_x = point->x - actor->currPosRot.pos.x;
-    imm_z = point->z - actor->currPosRot.pos.z;
+    imm_x = point->x - actor->posRot.pos.x;
+    imm_z = point->z - actor->posRot.pos.z;
     offset->x = ((imm_x * cos_rot_y) - (imm_z * sin_rot_y));
     offset->z = ((imm_z * cos_rot_y) + (imm_x * sin_rot_y));
-    offset->y = point->y - actor->currPosRot.pos.y;
+    offset->y = point->y - actor->posRot.pos.y;
 }
 
 f32 Actor_YDistance(Actor* actor1, Actor* actor2) {
-    return actor2->currPosRot.pos.y - actor1->currPosRot.pos.y;
+    return actor2->posRot.pos.y - actor1->posRot.pos.y;
 }
 
 GLOBAL_ASM("asm/non_matchings/z_actor//func_800B6F20.asm")
@@ -416,7 +648,7 @@ s32 Actor_IsActorFacedByActor(Actor* actor, Actor* other, s16 tolerance) {
 
     angle = Actor_YawBetweenActors(actor, other) + 0x8000;
     dist = angle - other->shape.rot.y;
-    if (ABS(dist) < tolerance) {
+    if (ABS2(dist) < tolerance) {
         return 1;
     }
     return 0;
@@ -426,7 +658,7 @@ s32 Actor_IsActorFacingLink(Actor* actor, s16 angle) {
     s16 dist;
 
     dist = actor->rotTowardsLinkY - actor->shape.rot.y;
-    if (ABS(dist) < angle) {
+    if (ABS2(dist) < angle) {
         return 1;
     }
     return 0;
@@ -436,7 +668,7 @@ s32 Actor_IsActorFacingActor(Actor* actor, Actor* other, s16 tolerance) {
     s16 dist;
 
     dist = Actor_YawBetweenActors(actor, other) - actor->shape.rot.y;
-    if (ABS(dist) < tolerance) {
+    if (ABS2(dist) < tolerance) {
         return 1;
     }
     return 0;
@@ -449,7 +681,7 @@ s32 Actor_IsActorFacingActorAndWithinRange(Actor* actor, Actor* other, f32 range
 
     if (Actor_DistanceBetweenActors(actor, other) < range) {
         dist = Actor_YawBetweenActors(actor, other) - actor->shape.rot.y;
-        if (ABS(dist) < tolerance) {
+        if (ABS2(dist) < tolerance) {
             return 1;
         }
     }

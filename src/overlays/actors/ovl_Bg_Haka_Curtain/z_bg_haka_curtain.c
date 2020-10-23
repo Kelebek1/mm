@@ -96,13 +96,13 @@ void func_80B6DD80(BgHakaCurtain* this) {
 }
 
 void func_80B6DD9C(BgHakaCurtain* this, GlobalContext* globalCtx) {
-    if (this->dyna.actor.currPosRot.pos.y < this->dyna.actor.initPosRot.pos.y + 150.0f - 30.0f) {
+    if (this->dyna.actor.posRot.pos.y < this->dyna.actor.initPosRot.pos.y + 150.0f - 30.0f) {
         Lib_StepTowardsCheck_f(&this->dyna.actor.velocity.y, 1.6f, 0.12f);
     } else {
         Lib_StepTowardsCheck_f(&this->dyna.actor.velocity.y, 0.8f, 0.05f);
     }
-    this->dyna.actor.currPosRot.pos.y += this->dyna.actor.velocity.y;
-    if (this->dyna.actor.initPosRot.pos.y + 150.0f < this->dyna.actor.currPosRot.pos.y) {
+    this->dyna.actor.posRot.pos.y += this->dyna.actor.velocity.y;
+    if (this->dyna.actor.initPosRot.pos.y + 150.0f < this->dyna.actor.posRot.pos.y) {
         func_80B6DE80(this);
         return;
     }
@@ -111,7 +111,7 @@ void func_80B6DD9C(BgHakaCurtain* this, GlobalContext* globalCtx) {
 
 void func_80B6DE80(BgHakaCurtain* this) {
     this->actionFunc = func_80B6DEA8;
-    this->dyna.actor.currPosRot.pos.y = this->dyna.actor.initPosRot.pos.y + 150.0f;
+    this->dyna.actor.posRot.pos.y = this->dyna.actor.initPosRot.pos.y + 150.0f;
 }
 
 void func_80B6DEA8(BgHakaCurtain* this, GlobalContext* globalCtx) {

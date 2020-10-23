@@ -2071,7 +2071,7 @@ extern SceneEntranceTableEnty gSceneEntranceTable[110]; // D_801C5720
 extern UNK_PTR D_801C5C50; // D_801C5C50
 extern UNK_TYPE1 D_801C5C9C; // D_801C5C9C
 extern UNK_PTR D_801C5CB0; // D_801C5CB0
-extern z_Matrix identityMatrix; // D_801C5CD0
+extern MtxF identityMatrix; // D_801C5CD0
 extern UNK_TYPE1 D_801C5D10; // D_801C5D10
 extern UNK_TYPE1 D_801C5D20; // D_801C5D20
 extern UNK_TYPE1 D_801C5D60; // D_801C5D60
@@ -2337,7 +2337,7 @@ extern Vec3f D_801D15B0; // D_801D15B0
 extern UNK_TYPE4 D_801D15BC; // D_801D15BC
 extern s16 atan_first_8th_array[1025]; // D_801D15D0
 extern RSPMatrix D_801D1DE0; // D_801D1DE0
-extern z_Matrix D_801D1E20; // D_801D1E20
+extern MtxF D_801D1E20; // D_801D1E20
 extern UNK_PTR D_801D1E60; // D_801D1E60
 extern UNK_PTR D_801D1E64; // D_801D1E64
 extern UNK_TYPE1 D_801D1E70; // D_801D1E70
@@ -3841,7 +3841,7 @@ extern Vec3f D_801EDA08; // D_801EDA08
 extern Vec3f D_801EDA18; // D_801EDA18
 extern Vec3f D_801EDA24; // D_801EDA24
 extern Vec3f D_801EDA30; // D_801EDA30
-extern z_Matrix D_801EDA40; // D_801EDA40
+extern MtxF D_801EDA40; // D_801EDA40
 extern Vec3f D_801EDA80; // D_801EDA80
 extern Vec3f D_801EDA8C; // D_801EDA8C
 extern Vec3f D_801EDA98; // D_801EDA98
@@ -4245,8 +4245,8 @@ extern UNK_TYPE1 D_801FBDD8; // D_801FBDD8
 extern UNK_TYPE1 D_801FBDDC; // D_801FBDDC
 extern UNK_TYPE1 D_801FBDE0; // D_801FBDE0
 extern Vec3f D_801FBDE8; // D_801FBDE8
-extern z_Matrix* matrixState; // D_801FBE00
-extern z_Matrix* matrixCurrentState; // D_801FBE04
+extern MtxF* matrixState; // D_801FBE00
+extern MtxF* matrixCurrentState; // D_801FBE04
 extern UNK_TYPE1 D_801FBE10; // D_801FBE10
 extern UNK_TYPE1 D_801FBE28; // D_801FBE28
 extern UNK_TYPE1 D_801FBE2C; // D_801FBE2C
@@ -4531,4 +4531,6 @@ extern u8 D_80780000[17920]; // D_80780000
 extern u8 D_80784600[352768]; // D_80784600
 extern u16 D_807DA800[76800]; // D_807DA800
 
+extern Gfx D_04076BC0[];
+extern Gfx D_04075A40[];
 #endif

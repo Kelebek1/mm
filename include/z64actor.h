@@ -8,7 +8,7 @@
 
 struct Actor;
 struct GlobalContext;
-struct LightMapper;
+struct Lights;
 struct BgPolygon;
 
 typedef void(*ActorFunc)(struct Actor* this, struct GlobalContext* ctxt);
@@ -89,7 +89,7 @@ typedef struct {
     /* 0x1F */ UNK_TYPE1 pad1F[0x1];
 } ActorOverlay; // size = 0x20
 
-typedef void(*actor_shadow_draw_func)(struct Actor* actor, struct LightMapper* mapper, struct GlobalContext* ctxt);
+typedef void(*actor_shadow_draw_func)(struct Actor* actor, struct Lights* light, struct GlobalContext* ctxt);
 
 typedef struct {
     /* 0x00 */ Vec3s rot;
@@ -97,6 +97,9 @@ typedef struct {
     /* 0x0C */ actor_shadow_draw_func shadowDrawFunc;
     /* 0x10 */ f32 scale;
     /* 0x14 */ u8 alphaScale; // 255 means always draw full opacity if visible
+    /* 0x15 */ u8 unk_15;
+    /* 0x16 */ u8 unk_16;
+    /* 0x17 */ u8 unk_17;
 } ActorShape; // size = 0x18
 
 typedef struct Actor {
@@ -110,7 +113,7 @@ typedef struct Actor {
     /* 0x01F */ UNK_TYPE1 unk1F;
     /* 0x020 */ u16 unk20;
     /* 0x022 */ u16 unk22;
-    /* 0x024 */ PosRot currPosRot;
+    /* 0x024 */ PosRot posRot;
     /* 0x038 */ s8 cutscene;
     /* 0x039 */ u8 unk39;
     /* 0x03A */ UNK_TYPE1 pad3A[0x2];
@@ -127,17 +130,17 @@ typedef struct Actor {
     /* 0x080 */ struct BgPolygon* floorPoly;
     /* 0x084 */ u8 wallPolySource;
     /* 0x085 */ u8 floorPolySource;
-    /* 0x086 */ UNK_TYPE1 pad86[0x2];
-    /* 0x088 */ f32 unk88;
-    /* 0x08C */ f32 unk8C;
-    /* 0x090 */ u16 unk90;
+    /* 0x086 */ s16 wallPolyRot;
+    /* 0x088 */ f32 groundY;
+    /* 0x08C */ f32 waterY;
+    /* 0x090 */ u16 bgCheckFlags;
     /* 0x092 */ s16 rotTowardsLinkY;
     /* 0x094 */ f32 sqrdDistanceFromLink;
     /* 0x098 */ f32 xzDistanceFromLink;
     /* 0x09C */ f32 yDistanceFromLink;
     /* 0x0A0 */ ActorA0 unkA0;
     /* 0x0BC */ ActorShape shape;
-    /* 0x0D4 */ UNK_TYPE1 padD4[0x18];
+    /* 0x0D4 */ Vec3f unk_D4[2];
     /* 0x0EC */ Vec3f projectedPos;
     /* 0x0F8 */ f32 unkF8;
     /* 0x0FC */ f32 unkFC;
@@ -207,7 +210,9 @@ typedef struct {
     /* 0xA84 */ UNK_TYPE1 padA84[0x4];
     /* 0xA88 */ Actor* unkA88;
     /* 0xA8C */ f32 unkA8C;
-    /* 0xA90 */ UNK_TYPE1 padA90[0x44];
+    /* 0xA90 */ UNK_TYPE1 padA90[0x1A];
+    /* 0xAAA */ s16 unk_AAA;
+    /* 0xAAC */ UNK_TYPE1 padAAC[0x28];
     /* 0xAD4 */ s16 unkAD4;
     /* 0xAD6 */ UNK_TYPE1 padAD6[0x8];
     /* 0xADE */ u8 unkADE;

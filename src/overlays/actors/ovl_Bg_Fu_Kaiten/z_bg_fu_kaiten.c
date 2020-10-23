@@ -53,9 +53,9 @@ void BgFuKaiten_UpdateRotation(BgFuKaiten* this) {
 
 void BgFuKaiten_UpdateHeight(BgFuKaiten* this) {
     this->bounce += this->bounceSpeed;
-    this->bg.actor.currPosRot.pos.y = this->bg.actor.initPosRot.pos.y + this->elevation + this->bouceHeight;
+    this->bg.actor.posRot.pos.y = this->bg.actor.initPosRot.pos.y + this->elevation + this->bouceHeight;
 
-    this->bg.actor.currPosRot.pos.y -= this->bouceHeight * Math_Coss(this->bounce);
+    this->bg.actor.posRot.pos.y -= this->bouceHeight * Math_Coss(this->bounce);
 }
 
 void BgFuKaiten_Update(Actor* thisx, GlobalContext* globalCtx) {

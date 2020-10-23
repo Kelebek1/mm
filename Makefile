@@ -103,7 +103,7 @@ CC := ./tools/preprocess.py $(CC) -- $(AS) $(ASFLAGS) --
 
 .PHONY: all clean setup diff-init init
 # disasm is not a file so we must tell make not to check it when evaluating timestamps
-.INTERMEDIATE: disasm
+#.INTERMEDIATE: disasm
 
 all:
 	$(MAKE) $(UNCOMPRESSED_ROM)
@@ -147,13 +147,13 @@ build/decomp/code: build/code.bin
 build/decomp/ovl_%: build/code.elf
 	$(OBJCOPY) --dump-section ovl_$*=$@ $< /dev/null
 
-$(S_FILES): disasm
-
-disasm: tables/files.txt tables/functions.txt tables/objects.txt tables/variables.txt tables/vrom_variables.txt tables/pre_boot_variables.txt tables/files_with_nonmatching.txt
-	./tools/disasm.py -d ./asm -u . -l ./tables/files.txt -f ./tables/functions.txt -o ./tables/objects.txt -v ./tables/variables.txt -v ./tables/vrom_variables.txt -v ./tables/pre_boot_variables.txt
-	@while read -r file; do \
-		./tools/split_asm.py ./asm/$$file.asm ./asm/non_matchings/$$file; \
-	done < ./tables/files_with_nonmatching.txt
+# $(S_FILES): disasm
+# 
+# disasm: tables/files.txt tables/functions.txt tables/objects.txt tables/variables.txt tables/vrom_variables.txt tables/pre_boot_variables.txt tables/files_with_nonmatching.txt
+# 	./tools/disasm.py -d ./asm -u . -l ./tables/files.txt -f ./tables/functions.txt -o ./tables/objects.txt -v ./tables/variables.txt -v ./tables/vrom_variables.txt -v ./tables/pre_boot_variables.txt
+# 	@while read -r file; do \
+# 		./tools/split_asm.py ./asm/$$file.asm ./asm/non_matchings/$$file; \
+# 	done < ./tables/files_with_nonmatching.txt
 
 clean:
 	rm -f $(ROM) $(UNCOMPRESSED_ROM) -r build asm

@@ -32,7 +32,7 @@ s32 func_800E8FA4(Actor* actor, Vec3f* param_2, Vec3s* param_3, Vec3s* param_4) 
     s16 yawDiffFromTarget;
 
     targetPitch = Math_Vec3f_Pitch(&actor->topPosRot.pos,param_2);
-    targetYaw = Math_Vec3f_Yaw(&actor->topPosRot.pos,param_2) - actor->currPosRot.rot.y;
+    targetYaw = Math_Vec3f_Yaw(&actor->topPosRot.pos,param_2) - actor->posRot.rot.y;
 
     Math_SmoothScaleMaxMinS(&param_3->x, targetPitch, 6, 2000, 1);
     param_3->x = (param_3->x < -6000)? -6000 : ((6000 < param_3->x)? 6000 : param_3->x);
@@ -58,7 +58,7 @@ s32 func_800E9138(GlobalContext* ctxt, Actor* actor, Vec3s* param_3, Vec3s* para
     Vec3f local_14;
 
     player = (ctxt->actorCtx).actorList[2].first;
-    actor->topPosRot.pos = actor->currPosRot.pos;
+    actor->topPosRot.pos = actor->posRot.pos;
     actor->topPosRot.pos.y += param_5;
 
     if (((ctxt->csCtx).state == 0) && (D_801D0D50 == 0)) {

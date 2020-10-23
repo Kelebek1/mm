@@ -6,9 +6,9 @@
 // The functions will use the BgCheck2 prefix for now.
 
 void BgCheck2_UpdateActorPosition(CollisionContext* bgCtxt, s32 index, Actor* actor) {
-    z_Matrix prevMatrix;
-    z_Matrix prevMatrixInv;
-    z_Matrix currMatrix;
+    MtxF prevMatrix;
+    MtxF prevMatrixInv;
+    MtxF currMatrix;
     Vec3f newPos;
     Vec3f posWithInv;
 
@@ -38,10 +38,10 @@ void BgCheck2_UpdateActorPosition(CollisionContext* bgCtxt, s32 index, Actor* ac
         bgCtxt->dyna.actorMeshArr[index].currParams.pos.y,
         bgCtxt->dyna.actorMeshArr[index].currParams.pos.z);
 
-    Matrix_MultiplyByVectorXYZ(&prevMatrixInv, &actor->currPosRot.pos, &posWithInv);
+    Matrix_MultiplyByVectorXYZ(&prevMatrixInv, &actor->posRot.pos, &posWithInv);
     Matrix_MultiplyByVectorXYZ(&currMatrix, &posWithInv, &newPos);
 
-    actor->currPosRot.pos = newPos;
+    actor->posRot.pos = newPos;
 }
 
 void BgCheck2_UpdateActorYRotation(CollisionContext* bgCtxt, s32 index, Actor* actor) {
@@ -56,7 +56,7 @@ void BgCheck2_UpdateActorYRotation(CollisionContext* bgCtxt, s32 index, Actor* a
     }
 
     actor->shape.rot.y += angleChange;
-    actor->currPosRot.rot.y += angleChange;
+    actor->posRot.rot.y += angleChange;
 }
 
 void BgCheck2_AttachToMesh(CollisionContext* bgCtxt, Actor* actor, s32 index) {
