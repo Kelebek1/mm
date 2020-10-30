@@ -76,11 +76,11 @@ void func_808C1154(ArmsHook* this) {
     this->actor.parent->parent = &this->actor;
 }
 
-s32 ArmsHook_AttachToPlayer(ArmsHook* this, ActorPlayer* player) {
-    player->base.child = &this->actor;
+s32 ArmsHook_AttachToPlayer(ArmsHook* this, Player* player) {
+    player->actor.child = &this->actor;
     player->heldActor = &this->actor;
     if (this->actor.child != NULL) {
-        player->base.parent = this->actor.child = NULL;
+        player->actor.parent = this->actor.child = NULL;
         return 1;
     }
     return 0;
@@ -94,9 +94,9 @@ void ArmsHook_DetachHookFromActor(ArmsHook* this) {
 }
 
 s32 ArmsHook_CheckForCancel(ArmsHook* this) {
-    ActorPlayer* player = (ActorPlayer*)this->actor.parent;
+    Player* player = (Player*)this->actor.parent;
     if (func_801240C8(player)) {
-        if ((player->heldItemActionParam != player->itemActionParam) || ((player->base.flags & 0x100)) ||
+        if ((player->heldItemActionParam != player->itemActionParam) || ((player->actor.flags & 0x100)) ||
             ((player->stateFlags1 & 0x4000080))) {
             this->timer = 0;
             ArmsHook_DetachHookFromActor(this);
@@ -114,15 +114,15 @@ void ArmsHook_AttachHookToActor(ArmsHook* this, Actor* actor) {
 }
 
 void ArmsHook_Shoot(ArmsHook* this, GlobalContext* globalCtx) {
-    ActorPlayer* player = PLAYER;
+    Player* player = PLAYER;
 
     if ((this->actor.parent == NULL) || (!func_801240C8(player))) {
         ArmsHook_DetachHookFromActor(this);
-        Actor_MarkForDeath(&this->actor);
+        Actor_Kill(&this->actor);
         return;
     }
 
-    func_800B8F98(&player->base, 0x100B);
+    func_800B8F98(&player->actor, 0x100B);
     ArmsHook_CheckForCancel(this);
 
     if (this->timer != 0 && (this->collider.base.flagsAT & 2) && (this->collider.body.unk20->unk14 != 4)) {
@@ -203,8 +203,8 @@ void ArmsHook_Shoot(ArmsHook* this, GlobalContext* globalCtx) {
                 Math_Vec3f_Sum(&this->actor.posRot.pos, &this->unk1FC, &grabbed->posRot.pos);
             }
         } else {
-            Math_Vec3f_Diff(&bodyDistDiffVec, &newPos, &player->base.velocity);
-            player->base.posRot.rot.x =
+            Math_Vec3f_Diff(&bodyDistDiffVec, &newPos, &player->actor.velocity);
+            player->actor.posRot.rot.x =
                 atans_flip(sqrtf(SQ(bodyDistDiffVec.x) + SQ(bodyDistDiffVec.z)), -bodyDistDiffVec.y);
         }
         if (phi_f16 < 50.0f) {
@@ -212,19 +212,19 @@ void ArmsHook_Shoot(ArmsHook* this, GlobalContext* globalCtx) {
             if (phi_f16 == 0.0f) {
                 ArmsHook_SetupAction(this, ArmsHook_Wait);
                 if (ArmsHook_AttachToPlayer(this, player)) {
-                    Math_Vec3f_Diff(&this->actor.posRot.pos, &player->base.posRot.pos, &player->base.velocity);
-                    player->base.velocity.y -= 20.0f;
+                    Math_Vec3f_Diff(&this->actor.posRot.pos, &player->actor.posRot.pos, &player->actor.velocity);
+                    player->actor.velocity.y -= 20.0f;
                 }
             }
         }
     } else {
-        BgPolygon* poly;
+        CollisionPoly* poly;
         u32 dynaPolyID;
         Vec3f sp78;
         Vec3f prevFrameDiff;
         Vec3f sp60;
 
-        Actor_SetVelocityAndMoveYRotationAndGravity(&this->actor);
+        Actor_MoveForward(&this->actor);
         Math_Vec3f_Diff(&this->actor.posRot.pos, &this->actor.lastPos, &prevFrameDiff);
         Math_Vec3f_Sum(&this->unk1E0, &prevFrameDiff, &this->unk1E0);
         this->actor.shape.rot.x = atans_flip(this->actor.speedXZ, -this->actor.velocity.y);
@@ -275,14 +275,14 @@ void ArmsHook_Update(Actor* thisx, GlobalContext* globalCtx) {
 void ArmsHook_Draw(Actor* thisx, GlobalContext* globalCtx) {
     ArmsHook* this = THIS;
     s32 pad;
-    ActorPlayer* player = PLAYER;
+    Player* player = PLAYER;
     Vec3f sp68;
     Vec3f sp5C;
     Vec3f sp50;
     f32 sp4C;
     f32 sp48;
 
-    if (player->base.draw != NULL && player->unk151 == 0xB) {
+    if (player->actor.draw != NULL && player->unk151 == 0xB) {
         // OPEN_DISP macro
         {
             GraphicsContext* sp44 = globalCtx->state.gfxCtx;

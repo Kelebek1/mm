@@ -52,7 +52,7 @@ void BgCheck2_UpdateActorYRotation(CollisionContext* bgCtxt, s32 index, Actor* a
     angleChange = bgCtxt->dyna.actorMeshArr[index].currParams.rotation.y - bgCtxt->dyna.actorMeshArr[index].prevParams.rotation.y;
 
     if (actor->id == 0) {
-        ((ActorPlayer*)actor)->unkAD4 += angleChange;
+        ((Player*)actor)->unkAD4 += angleChange;
     }
 
     actor->shape.rot.y += angleChange;

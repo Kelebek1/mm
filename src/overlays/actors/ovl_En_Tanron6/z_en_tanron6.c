@@ -31,10 +31,10 @@ ActorDamageChart D_80BE6170 = { 0xF0, 0xF0, 0x00, 0xF1, 0xE1, 0xE1, 0x00, 0xE1, 
 void EnTanron6_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnTanron6* this = THIS;
 
-    this->actor.unkA0.mass = 0xA;
-    Actor_SetDrawParams(&this->actor.shape, 0, func_800B3FC0, 19.0f);
-    this->actor.unkA0.health = 1;
-    this->actor.unkA0.damageChart = &D_80BE6170;
+    this->actor.colChkInfo.mass = 0xA;
+    ActorShape_Init(&this->actor.shape, 0, func_800B3FC0, 19.0f);
+    this->actor.colChkInfo.health = 1;
+    this->actor.colChkInfo.damageChart = &D_80BE6170;
     this->actor.unk1F = 6;
     EnTanron6_DoNothing(this);
 }
@@ -53,7 +53,7 @@ void EnTanron6_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnTanron6* this = THIS;
 
     this->actionFunc(this, globalCtx);
-    Actor_SetVelocityAndMoveYRotationAndGravity(&this->actor);
+    Actor_MoveForward(&this->actor);
     func_800B78B8(globalCtx, &this->actor, 10.0f, 40.0f, 40.0f, 0x1D);
 }
 

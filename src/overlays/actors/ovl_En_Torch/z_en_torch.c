@@ -27,5 +27,5 @@ void EnTorch_Init(Actor* thisx, GlobalContext* globalCtx) {
     Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BOX, this->actor.posRot.pos.x,
                 this->actor.posRot.pos.y, this->actor.posRot.pos.z, 0, this->actor.shape.rot.y, 0,
                 (sChestContents[(returnData >> 0x5) & 0x7] << 0x5) | 0x5000 | (returnData & 0x1F));
-    Actor_MarkForDeath(&this->actor);
+    Actor_Kill(&this->actor);
 }

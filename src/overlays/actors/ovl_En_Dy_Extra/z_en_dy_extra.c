@@ -61,7 +61,7 @@ void func_80A613C8(EnDyExtra* this, GlobalContext* globalCtx) {
     Math_SmoothScaleMaxF(&this->actor.gravity, 0.0f, 0.1f, 0.005f);
 
     if (this->unk14C == 0 || this->unk150 < 0.02f) {
-        Actor_MarkForDeath(&this->actor);
+        Actor_Kill(&this->actor);
         return;
     }
 
@@ -78,7 +78,7 @@ void EnDyExtra_Update(Actor* thisx, GlobalContext* globalCtx) {
     DECR(this->unk14C);
     func_800B8EC8(&this->actor, 0xC4U);
     this->actionFunc(this, globalCtx);
-    Actor_SetVelocityAndMoveYRotationAndGravity(&this->actor);
+    Actor_MoveForward(&this->actor);
 }
 
 void EnDyExtra_Draw(Actor* thisx, GlobalContext* globalCtx) {

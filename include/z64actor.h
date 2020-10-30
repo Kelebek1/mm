@@ -9,7 +9,6 @@
 struct Actor;
 struct GlobalContext;
 struct Lights;
-struct BgPolygon;
 
 typedef void(*ActorFunc)(struct Actor* this, struct GlobalContext* ctxt);
 
@@ -17,6 +16,15 @@ typedef struct {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ Vec3s rot;
 } PosRot; // size = 0x14
+
+typedef struct {
+    /* 0x0 */ u16 attributeIndex;
+    /* 0x2 */ u16 vertA; // upper 3 bits contain flags
+    /* 0x4 */ u16 vertB; // upper 3 bits contain flags
+    /* 0x6 */ u16 vertC;
+    /* 0x8 */ Vec3s normal;
+    /* 0xE */ s16 dist;
+} CollisionPoly; // size = 0x10
 
 typedef struct {
     /* 0x00 */ u8 attack[32];
@@ -56,7 +64,7 @@ typedef struct {
     /* 0x19 */ u8 damageEffect;
     /* 0x1A */ u8 impactEffect;
     /* 0x1B */ UNK_TYPE1 pad1B[0x1];
-} ActorA0; // size = 0x1C
+} CollisionCheckInfo; // size = 0x1C
 
 typedef struct {
     /* 0x00 */ s16 id;
@@ -116,36 +124,34 @@ typedef struct Actor {
     /* 0x024 */ PosRot posRot;
     /* 0x038 */ s8 cutscene;
     /* 0x039 */ u8 unk39;
-    /* 0x03A */ UNK_TYPE1 pad3A[0x2];
     /* 0x03C */ PosRot topPosRot;
-    /* 0x050 */ u16 unk50;
-    /* 0x052 */ UNK_TYPE1 pad52[0x2];
+    /* 0x050 */ u16 sfx;
     /* 0x054 */ f32 unk54;
     /* 0x058 */ Vec3f scale;
     /* 0x064 */ Vec3f velocity;
     /* 0x070 */ f32 speedXZ;
     /* 0x074 */ f32 gravity;
     /* 0x078 */ f32 minVelocityY;
-    /* 0x07C */ struct BgPolygon* wallPoly;
-    /* 0x080 */ struct BgPolygon* floorPoly;
+    /* 0x07C */ CollisionPoly* wallPoly;
+    /* 0x080 */ CollisionPoly* floorPoly;
     /* 0x084 */ u8 wallPolySource;
     /* 0x085 */ u8 floorPolySource;
     /* 0x086 */ s16 wallPolyRot;
     /* 0x088 */ f32 groundY;
     /* 0x08C */ f32 waterY;
     /* 0x090 */ u16 bgCheckFlags;
-    /* 0x092 */ s16 rotTowardsLinkY;
+    /* 0x092 */ s16 yawTowardsLink;
     /* 0x094 */ f32 sqrdDistanceFromLink;
     /* 0x098 */ f32 xzDistanceFromLink;
     /* 0x09C */ f32 yDistanceFromLink;
-    /* 0x0A0 */ ActorA0 unkA0;
+    /* 0x0A0 */ CollisionCheckInfo colChkInfo;
     /* 0x0BC */ ActorShape shape;
     /* 0x0D4 */ Vec3f unk_D4[2];
     /* 0x0EC */ Vec3f projectedPos;
     /* 0x0F8 */ f32 unkF8;
-    /* 0x0FC */ f32 unkFC;
-    /* 0x100 */ f32 unk100;
-    /* 0x104 */ f32 unk104;
+    /* 0x0FC */ f32 uncullZoneForward;
+    /* 0x100 */ f32 uncullZoneScale;
+    /* 0x104 */ f32 uncullZoneDownward;
     /* 0x108 */ Vec3f lastPos;
     /* 0x114 */ u8 unk114;
     /* 0x115 */ u8 unk115;
@@ -169,7 +175,7 @@ typedef struct Actor {
 
 typedef struct {
     /* 0x000 */ Actor actor;
-    /* 0x144 */ s32 dynaPolyId;
+    /* 0x144 */ u32 dynaPolyId;
     /* 0x148 */ f32 unk148;
     /* 0x14C */ f32 unk14C;
     /* 0x150 */ s16 unk150;
@@ -180,7 +186,7 @@ typedef struct {
 } DynaPolyActor; // size = 0x15C
 
 typedef struct {
-    /* 0x000 */ Actor base;
+    /* 0x000 */ Actor actor;
     /* 0x144 */ UNK_TYPE1 pad144[0x3];
     /* 0x147 */ s8 itemActionParam;
     /* 0x148 */ UNK_TYPE1 pad148[0x2];
@@ -194,36 +200,61 @@ typedef struct {
     /* 0x34C */ Actor* heldActor;
     /* 0x350 */ UNK_TYPE1 pad350[0x18];
     /* 0x368 */ Vec3f unk368;
-    /* 0x374 */ UNK_TYPE1 pad374[0x20];
-    /* 0x394 */ u8 unk394;
-    /* 0x395 */ UNK_TYPE1 pad395[0x37];
+    /* 0x374 */ UNK_TYPE1 pad374[0x10];
+    /* 0x384 */ s16 getItemId;
+    /* 0x386 */ u16 getItemDirection;
+    /* 0x388 */ Actor* interactRangeActor;
+    /* 0x38C */ s8 unk38C;
+    /* 0x390 */ Actor* rideActor;
+    /* 0x394 */ u8 csMode;
+    /* 0x398 */ Actor* unk398;
+    /* 0x39C */ UNK_TYPE1 pad39C[0x1E];
+    /* 0x3BA */ s16 unk3BA;
+    /* 0x3BC */ UNK_TYPE1 pad3BC[0x10];
     /* 0x3CC */ s16 unk3CC;
     /* 0x3CE */ s8 unk3CE;
     /* 0x3CF */ UNK_TYPE1 pad3CF[0x361];
     /* 0x730 */ Actor* unk730;
-    /* 0x734 */ UNK_TYPE1 pad734[0x338];
+    /* 0x734 */ UNK_TYPE1 pad734[0x4];
+    /* 0x738 */ s32 unk738;
+    /* 0x73C */ UNK_TYPE1 pad73C[0x330];
     /* 0xA6C */ u32 stateFlags1;
-    /* 0xA70 */ u32 unkA70;
+    /* 0xA70 */ u32 stateFlags2;
     /* 0xA74 */ u32 unkA74;
     /* 0xA78 */ UNK_TYPE1 padA78[0x8];
     /* 0xA80 */ Actor* unkA80;
-    /* 0xA84 */ UNK_TYPE1 padA84[0x4];
-    /* 0xA88 */ Actor* unkA88;
-    /* 0xA8C */ f32 unkA8C;
-    /* 0xA90 */ UNK_TYPE1 padA90[0x1A];
-    /* 0xAAA */ s16 unk_AAA;
-    /* 0xAAC */ UNK_TYPE1 padAAC[0x28];
+    /* 0xA84 */ UNK_TYPE1 padA84[0x3];
+    /* 0xA87 */ u8 exchangeItemId;
+    /* 0xA88 */ Actor* targetActor;
+    /* 0xA8C */ f32 targetActorDistance;
+    /* 0xA90 */ Actor* unkA90;
+    /* 0xA94 */ f32 unkA94;
+    /* 0xA98 */ UNK_TYPE1 padA98[0x8];
+    /* 0xAA0 */ f32 unkAA0;
+    /* 0xAA4 */ UNK_TYPE1 padAA4[0x6];
+    /* 0xAAA */ s16 unkAAA;
+    /* 0xAAC */ UNK_TYPE1 padAAC[0x14];
+    /* 0xAC0 */ f32 unkAC0;
+    /* 0xAC4 */ UNK_TYPE1 padAC4[0x8];
+    /* 0xACC */ s16 unkACC;
+    /* 0xACE */ UNK_TYPE1 padACE[0x6];
     /* 0xAD4 */ s16 unkAD4;
     /* 0xAD6 */ UNK_TYPE1 padAD6[0x8];
     /* 0xADE */ u8 unkADE;
     /* 0xADF */ UNK_TYPE1 padADF[0x4];
-    /* 0xAE3 */ s8 unkAE3;
-    /* 0xAE4 */ UNK_TYPE1 padAE4[0x44];
+    /* 0xAE3 */ s8 unkAE3[4];
+    /* 0xAE7 */ UNK_TYPE1 padAE7[0x41];
     /* 0xB28 */ s16 unkB28;
-    /* 0xB2A */ UNK_TYPE1 padB2A[0x72];
+    /* 0xB2A */ UNK_TYPE1 padB2A[0x4A];
+    /* 0xB74 */ s8 unkB74;
+    /* 0xB75 */ s8 unkB75;
+    /* 0xB76 */ s16 unkB76;
+    /* 0xB78 */ f32 unkB78;
+    /* 0xB7C */ f32 unkB7C;
+    /* 0xB80 */ UNK_TYPE1 padB80[0x1C];
     /* 0xB9C */ Vec3f unkB9C;
     /* 0xBA8 */ UNK_TYPE1 padBA8[0x1D0];
-} ActorPlayer; // size = 0xD78
+} Player; // size = 0xD78
 
 typedef struct {
     /* 0x000 */ Actor base;

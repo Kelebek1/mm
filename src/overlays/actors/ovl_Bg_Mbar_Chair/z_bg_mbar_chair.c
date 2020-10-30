@@ -22,9 +22,9 @@ const ActorInit Bg_Mbar_Chair_InitVars = {
 };
 
 static InitChainEntry bgMbarChairInitVars[] = {
-    ICHAIN_F32(unkFC, 2000, ICHAIN_CONTINUE),
-    ICHAIN_F32(unk100, 60, ICHAIN_CONTINUE),
-    ICHAIN_F32(unk104, 80, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneForward, 2000, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneScale, 60, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneDownward, 80, ICHAIN_CONTINUE),
     ICHAIN_VEC3F_DIV1000(scale, 100, ICHAIN_STOP),
 };
 

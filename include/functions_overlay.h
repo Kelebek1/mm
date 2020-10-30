@@ -522,7 +522,7 @@ void func_80841624(void); // func_80841624
 void func_80841744(void); // func_80841744
 void func_8084182C(void); // func_8084182C
 void func_80841A50(void); // func_80841A50
-void func_80841AC4(ActorPlayer* this, GlobalContext* ctxt); // func_80841AC4
+void func_80841AC4(Player* this, GlobalContext* ctxt); // func_80841AC4
 void func_80842510(void); // func_80842510
 void func_808425B4(void); // func_808425B4
 void func_808426F0(void); // func_808426F0

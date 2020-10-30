@@ -247,27 +247,27 @@ void SceneProc_DrawAnimatedTextures(GlobalContext* ctxt, AnimatedTexture* textur
 }
 
 void SceneProc_DrawAllSceneAnimatedTextures(GlobalContext* ctxt, AnimatedTexture* textures) {
-    SceneProc_DrawAnimatedTextures(ctxt, textures, 1, ctxt->unk18840, 3);
+    SceneProc_DrawAnimatedTextures(ctxt, textures, 1, ctxt->gameplayFrames, 3);
 }
 
 void SceneProc_DrawOpaqueSceneAnimatedTextures(GlobalContext* ctxt, AnimatedTexture* textures) {
-    SceneProc_DrawAnimatedTextures(ctxt, textures, 1, ctxt->unk18840, 1);
+    SceneProc_DrawAnimatedTextures(ctxt, textures, 1, ctxt->gameplayFrames, 1);
 }
 
 void SceneProc_DrawTranslucentSceneAnimatedTextures(GlobalContext* ctxt, AnimatedTexture* textures) {
-    SceneProc_DrawAnimatedTextures(ctxt, textures, 1, ctxt->unk18840, 2);
+    SceneProc_DrawAnimatedTextures(ctxt, textures, 1, ctxt->gameplayFrames, 2);
 }
 
 void SceneProc_DrawAllSceneAnimatedTexturesWithAlpha(GlobalContext* ctxt, AnimatedTexture* textures, f32 alpha) {
-    SceneProc_DrawAnimatedTextures(ctxt, textures, alpha, ctxt->unk18840, 3);
+    SceneProc_DrawAnimatedTextures(ctxt, textures, alpha, ctxt->gameplayFrames, 3);
 }
 
 void SceneProc_DrawOpaqueSceneAnimatedTexturesWithAlpha(GlobalContext* ctxt, AnimatedTexture* textures, f32 alpha) {
-    SceneProc_DrawAnimatedTextures(ctxt, textures, alpha, ctxt->unk18840, 1);
+    SceneProc_DrawAnimatedTextures(ctxt, textures, alpha, ctxt->gameplayFrames, 1);
 }
 
 void SceneProc_DrawTranslucentSceneAnimatedTexturesWithAlpha(GlobalContext* ctxt, AnimatedTexture* textures, f32 alpha) {
-    SceneProc_DrawAnimatedTextures(ctxt, textures, alpha, ctxt->unk18840, 2);
+    SceneProc_DrawAnimatedTextures(ctxt, textures, alpha, ctxt->gameplayFrames, 2);
 }
 
 void SceneProc_DrawAllAnimatedTextures(GlobalContext* ctxt, AnimatedTexture* textures, u32 step) {
@@ -300,7 +300,7 @@ void SceneProc_DrawSceneConfig1(GlobalContext* ctxt) {
 // This function still needs a lot of work
 void SceneProc_DrawSceneConfig3(GlobalContext* ctxt) {
     GraphicsContext* gfxCtx = ctxt->state.gfxCtx;
-    u32 frames = ctxt->unk18840;
+    u32 frames = ctxt->gameplayFrames;
 
     if (0);
 
@@ -340,7 +340,7 @@ void SceneProc_DrawSceneConfig4(GlobalContext* ctxt) {
     GraphicsContext* gfxCtx = ctxt->state.gfxCtx;
     u32 frames2;
 
-    frames = ctxt->unk18840;
+    frames = ctxt->gameplayFrames;
     frames2 = frames * 1;
 
     gSPSegment(gfxCtx->polyXlu.p++, 8,
@@ -432,10 +432,10 @@ void SceneProc_DrawSceneConfig6(GlobalContext* ctxt) {
     u32 pad6;
     Gfx* dl;
 
-    if (Actor_GetSwitchFlag(ctxt,0x33) &&
-        Actor_GetSwitchFlag(ctxt,0x34) &&
-        Actor_GetSwitchFlag(ctxt,0x35) &&
-        Actor_GetSwitchFlag(ctxt,0x36)) {
+    if (Flags_GetSwitch(ctxt,0x33) &&
+        Flags_GetSwitch(ctxt,0x34) &&
+        Flags_GetSwitch(ctxt,0x35) &&
+        Flags_GetSwitch(ctxt,0x36)) {
         func_800C3C00(&ctxt->colCtx, 1);
     } else {
         func_800C3C14(&ctxt->colCtx, 1);
@@ -458,56 +458,56 @@ void SceneProc_DrawSceneConfig6(GlobalContext* ctxt) {
 
         switch(i) {
         case 0:
-            if (Actor_GetSwitchFlag(ctxt,0x33) &&
-                Actor_GetSwitchFlag(ctxt,0x34) &&
-                Actor_GetSwitchFlag(ctxt,0x35) &&
-                Actor_GetSwitchFlag(ctxt,0x36)) {
+            if (Flags_GetSwitch(ctxt,0x33) &&
+                Flags_GetSwitch(ctxt,0x34) &&
+                Flags_GetSwitch(ctxt,0x35) &&
+                Flags_GetSwitch(ctxt,0x36)) {
                 lodFrac = 0xFF;
             }
             break;
         case 1:
-            if (Actor_GetSwitchFlag(ctxt,0x37)) {
+            if (Flags_GetSwitch(ctxt,0x37)) {
                 lodFrac = 0x44;
             }
             break;
         case 2:
-            if (Actor_GetSwitchFlag(ctxt,0x37) &&
-                Actor_GetSwitchFlag(ctxt,0x38)) {
+            if (Flags_GetSwitch(ctxt,0x37) &&
+                Flags_GetSwitch(ctxt,0x38)) {
                 lodFrac = 0x44;
             }
             break;
         case 3:
-            if (Actor_GetSwitchFlag(ctxt,0x37) &&
-                Actor_GetSwitchFlag(ctxt,0x38) &&
-                Actor_GetSwitchFlag(ctxt,0x39)) {
+            if (Flags_GetSwitch(ctxt,0x37) &&
+                Flags_GetSwitch(ctxt,0x38) &&
+                Flags_GetSwitch(ctxt,0x39)) {
                 lodFrac = 0x44;
             }
             break;
         case 4:
-            if (!Actor_GetSwitchFlag(ctxt,0x33)) {
+            if (!Flags_GetSwitch(ctxt,0x33)) {
                 lodFrac = 0x44;
             }
             break;
         case 5:
-            if (Actor_GetSwitchFlag(ctxt,0x34)) {
+            if (Flags_GetSwitch(ctxt,0x34)) {
                 lodFrac = 0x44;
             }
             break;
         case 6:
-            if (Actor_GetSwitchFlag(ctxt,0x34) &&
-                Actor_GetSwitchFlag(ctxt,0x35)) {
+            if (Flags_GetSwitch(ctxt,0x34) &&
+                Flags_GetSwitch(ctxt,0x35)) {
                 lodFrac = 0x44;
             }
             break;
         case 7:
-            if (Actor_GetSwitchFlag(ctxt,0x34) &&
-                Actor_GetSwitchFlag(ctxt,0x35) &&
-                Actor_GetSwitchFlag(ctxt,0x36)) {
+            if (Flags_GetSwitch(ctxt,0x34) &&
+                Flags_GetSwitch(ctxt,0x35) &&
+                Flags_GetSwitch(ctxt,0x36)) {
                 lodFrac = 0x44;
             }
             break;
         case 8:
-            if (Actor_GetSwitchFlag(ctxt,0x3A)) {
+            if (Flags_GetSwitch(ctxt,0x3A)) {
                 lodFrac = 0x44;
             }
             break;

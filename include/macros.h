@@ -32,20 +32,20 @@
             (curState)->nextGameStateInit = (GameStateFunc)newInit; \
             (curState)->nextGameStateSize = sizeof(newStruct); 
         
-#define PLAYER ((ActorPlayer*)globalCtx->actorCtx.actorList[ACTORTYPE_PLAYER].first)
+#define PLAYER ((Player*)globalCtx->actorCtx.actorList[ACTORTYPE_PLAYER].first)
 
 #define SQ(x) ((x)*(x))
 #define DECR(x) ((x) == 0 ? 0 : ((x) -= 1))
 
 extern GraphicsContext* oGfxCtx;
 
-#define OPEN_DISPS(gfxCtx) \
-    {                                  \
-        GraphicsContext* oGfxCtx;      \
-        oGfxCtx = gfxCtx;              \
+#define OPEN_DISPS(gfxCtx)                      \
+    {                                           \
+        GraphicsContext* oGfxCtx = gfxCtx;      \
+        s32 gfxPad;                             \
 
-#define CLOSE_DISPS(gfxCtx)                 \
-    }                                       \
+#define CLOSE_DISPS(gfxCtx)                     \
+    }                                           \
     (void)0
 
 #define GRAPH_ALLOC(gfxCtx, size)         \

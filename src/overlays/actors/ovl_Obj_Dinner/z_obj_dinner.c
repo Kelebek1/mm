@@ -28,7 +28,7 @@ void ObjDinner_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     if (gSaveContext.perm.isNight != 1 ||
         ((s32)gSaveContext.perm.day % 5 == 3 && gSaveContext.perm.weekEventReg[0x16] & 1)) {
-        Actor_MarkForDeath(&this->actor);
+        Actor_Kill(&this->actor);
     }
     Actor_SetScale(&this->actor, 0.1f);
 }

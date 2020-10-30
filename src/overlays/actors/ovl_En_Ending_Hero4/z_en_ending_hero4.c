@@ -30,13 +30,13 @@ extern AnimationHeader D_06002A84;
 void EnEndingHero4_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnEndingHero4* this = THIS;
 
-    this->actor.unkA0.mass = 0xFF;
+    this->actor.colChkInfo.mass = 0xFF;
     Actor_SetScale(&this->actor, 0.01f);
     this->actor.unk1F = 6;
     this->actor.gravity = -3.0f;
     SkelAnime_InitSV(globalCtx, &this->skelAnime, &D_0600D640, &D_06002A84, this->limbDrawTable,
                      this->transitionDrawTable, 17);
-    Actor_SetDrawParams(&this->actor.shape, 0.0f, func_800B3FC0, 25.0f);
+    ActorShape_Init(&this->actor.shape, 0.0f, func_800B3FC0, 25.0f);
     func_80C23748(this);
 }
 
@@ -56,7 +56,7 @@ void EnEndingHero4_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnEndingHero4* this = THIS;
 
     this->actionFunc(this, globalCtx);
-    Actor_SetVelocityAndMoveYRotationAndGravity(&this->actor);
+    Actor_MoveForward(&this->actor);
     func_800B78B8(globalCtx, &this->actor, 20.0f, 20.0f, 50.0f, 0x1D);
 }
 

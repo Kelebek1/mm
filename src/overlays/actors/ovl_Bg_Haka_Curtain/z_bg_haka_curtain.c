@@ -32,9 +32,9 @@ const ActorInit Bg_Haka_Curtain_InitVars = {
 };
 
 static InitChainEntry D_80B6DFA0[] = {
-    ICHAIN_F32(unkFC, 4000, ICHAIN_CONTINUE),
-    ICHAIN_F32(unk100, 700, ICHAIN_CONTINUE),
-    ICHAIN_F32(unk104, 600, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneForward, 4000, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneScale, 700, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneDownward, 600, ICHAIN_CONTINUE),
     ICHAIN_VEC3F_DIV1000(scale, 100, ICHAIN_STOP),
 };
 
