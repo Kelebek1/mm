@@ -1694,20 +1694,15 @@ void func_809D44C0(Boss01* this, GlobalContext* globalCtx) {
     }
 }
 
-#ifdef NON_MATCHING
-// Odd generation on the second ABS
 s32 func_809D4668(Boss01* this, GlobalContext* globalCtx) {
     ActorPlayer* player = PLAYER;
 
     if ((ABS16(this->actor.rotTowardsLinkY - this->actor.shape.rot.y) < 0x3000) &&
-        (ABS16(this->actor.rotTowardsLinkY - (player->base.shape.rot.y - 0x8000)) < 0x3000)) {
+        (ABS16(this->actor.rotTowardsLinkY - (s16)(player->base.shape.rot.y + 0x8000)) < 0x3000)) {
         return 1;
     }
     return 0;
 }
-#else
-GLOBAL_ASM("asm/non_matchings/ovl_Boss_01_0x809D0530/func_809D4668.asm")
-#endif
 
 void Boss01_Update(Actor* thisx, GameState* gameState) {
     Boss01* this = THIS;
